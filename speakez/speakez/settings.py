@@ -43,7 +43,7 @@ INSTALLED_APPS = [
 ]
 
 GRAPHENE = {
-    'SCHEMA': 'speakez_core.schema' # Where your Graphene schema lives
+    'SCHEMA': 'speakez.schema.schema' # Where your Graphene schema lives
 }
 
 MIDDLEWARE = [
