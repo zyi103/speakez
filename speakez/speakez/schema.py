@@ -1,8 +1,7 @@
 import graphene
-from graphene_django.types import DjangoObjectType
-from graphene_django.debug import DjangoDebug
+import speakez_core.schema
 
-class Query(graphene.ObjectType):
-    debug = graphene.Field(DjangoDebug, name='__debug')
+class Query(speakez_core.schema.Query, graphene.ObjectType):
+    pass
 
 schema = graphene.Schema(query=Query)
