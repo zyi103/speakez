@@ -7,6 +7,10 @@ from django.contrib.postgres.fields import JSONField
 # Create your models here.
 
 class Refugee(models.Model):
+    class Meta:
+        verbose_name = 'Refugee'
+        verbose_name_plural = "Refugees"
+
     SINGLE = 'single'
     MARRIED = 'married'
     MARTIAL_STATUSES = (
@@ -31,10 +35,16 @@ class Refugee(models.Model):
     city = models.CharField(_("City"), max_length=200, blank=True, null=True)
     zip_code = models.CharField(_("ZIP Code"), max_length=10, blank=True, null=True)
 
-    # Emergency contact ?
+    emergency_contact = models.CharField(_("Emergency Contact"), max_length=300, blank=True, null=True)
     martial_status = models.CharField(max_length=9, choices=MARTIAL_STATUSES, default=SINGLE)
 
     def __str__(self):
         return self.last_name + ', ' + self.first_name
+
+    def get_name(self):
+        return self.first_name + " " + self.middle_name + " " + self.last_name
+
+    def get_refugee_id(self):
+        return self.id
 
 

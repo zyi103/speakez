@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,7 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'speakez_api',
     'speakez_core',
+    'speakez',
     'graphene_django',
+    'bootstrap4',
+    'fontawesome',
 ]
 
 GRAPHENE = {
@@ -61,7 +63,9 @@ ROOT_URLCONF = 'speakez.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR + '/templates/',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,4 +128,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/speakez/static/'
+
+LOGIN_REDIRECT_URL = '/pages/dashboard/'

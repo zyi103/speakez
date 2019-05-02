@@ -1,0 +1,28 @@
+.login-title { 
+    margin: 10px 0px;
+}
+
+.header-title {
+    margin: 10px 0px;
+}
+
+.divider {
+    height: 20px;
+}
+
+.login-form, .dashboard {
+    margin-top: 50px;
+}
+
+.title {
+    line-height: 75px;
+}
+
+.section-bubble {
+    border-radius: 50%;
+}
+
+.menu-item {
+    width: 100%;
+    margin: 10px 0px;
+}
