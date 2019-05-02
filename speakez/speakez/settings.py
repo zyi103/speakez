@@ -130,4 +130,12 @@ USE_TZ = True
 
 STATIC_URL = '/speakez/static/'
 
-LOGIN_REDIRECT_URL = '/pages/dashboard/'
+LOGIN_REDIRECT_URL = '/pages/admin/'
+
+LOGIN_URL = '/accounts/login/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
