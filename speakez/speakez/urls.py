@@ -13,21 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
-from graphene_django.views import GraphQLView
 from speakez_core import views
-from rest_framework import routers
 from django.views.generic import RedirectView
 
-router = routers.SimpleRouter()
-router.register(r'', views.ViewSet, base_name="pages")
-
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    url(r'^graphql', GraphQLView.as_view(graphiql=True)),
     path('accounts/', include('django.contrib.auth.urls')),
-    url(r'^pages/', include(router.urls)),
+    path('admin/', views.dashboard),
+    path('admin/recipients', views.list_recipients),
     url(r'^', RedirectView.as_view(url='/accounts/login/'))
 ]
