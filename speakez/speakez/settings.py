@@ -130,7 +130,7 @@ USE_TZ = True
 
 STATIC_URL = '/speakez/static/'
 
-LOGIN_REDIRECT_URL = '/pages/admin/'
+LOGIN_REDIRECT_URL = '/admin/'
 
 LOGIN_URL = '/accounts/login/'
 
