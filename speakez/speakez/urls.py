@@ -22,5 +22,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', views.dashboard),
     path('admin/recipients', views.list_recipients),
+    path('admin/messages', views.list_messages),
     url(r'^', RedirectView.as_view(url='/accounts/login/'))
 ]

@@ -13,3 +13,6 @@ def list_recipients(request):
     recipients = Refugee.objects.all()
     return render(request, 'refugee/list.html', context={"refugees": recipients})
     
+def list_messages(request):
+    return render(request, 'message/message-list.html')
+    
