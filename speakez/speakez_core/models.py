@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from datetime import datetime
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.postgres.fields import JSONField
 
@@ -48,3 +49,31 @@ class Refugee(models.Model):
         return self.id
 
 
+class Category(models.Model):
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = "Categories"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    date_time_created = models.DateTimeField(_("Date and Time Created"), default=timezone.now)
+    title = models.CharField(_("Title"), max_length=250)
+
+    def __str__(self):
+        return self.title
+
+
+class CallMessage(models.Model):
+    class Meta:
+        verbose_name = 'Call Message'
+        verbose_name_plural = "Call Messages"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    date_time_created = models.DateTimeField(_("Date and Time Created"), default=timezone.now)
+    duration = models.FloatField(_("Duration in seconds"))
+    title = models.CharField(_("Title"), max_length=250)
+    content = models.TextField(_("Content"), blank=True, null=True)
+    category = models.ManyToManyField(Category)
+    audio = models.FileField(_("Audio"), upload_to='uploads/', blank=True, null=True)
+
+    def __str__(self):
+        return self.title
