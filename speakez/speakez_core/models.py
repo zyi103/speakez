@@ -4,6 +4,7 @@ from datetime import datetime
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.postgres.fields import JSONField
+from django.core.validators import FileExtensionValidator
 
 # Create your models here.
 
@@ -73,7 +74,7 @@ class CallMessage(models.Model):
     title = models.CharField(_("Title"), max_length=250)
     content = models.TextField(_("Content"), blank=True, null=True)
     category = models.ManyToManyField(Category)
-    audio = models.FileField(_("Audio"), upload_to='uploads/', blank=True, null=True)
+    audio = models.FileField(_("Audio"), upload_to='uploads/', validators=[FileExtensionValidator(allowed_extensions=['wav'])], blank=True, null=True)
 
     def __str__(self):
         return self.title
