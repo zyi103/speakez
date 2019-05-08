@@ -22,11 +22,8 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', views.dashboard),
     path('admin/recipients', views.list_recipients),
-<<<<<<< HEAD
     path('admin/messages', views.list_messages),
-=======
     path('admin/view_messages', views.list_call_messages),
     path('admin/view_messages/<int:call_message_id>/', views.call_message_detail, name='call_message_detail'),
->>>>>>> 383ec53c918d6a1275ddd2774e29321355a7f146
     url(r'^', RedirectView.as_view(url='/accounts/login/'))
 ]
