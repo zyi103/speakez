@@ -14,6 +14,28 @@
                 "test"
             ],
             "django": true
+        },
+        {
+            "name": "Run Server",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}\\speakez\\manage.py",
+            "cwd": "${workspaceFolder}\\speakez",
+            "args": [
+                "runserver"
+            ],
+            "django": true
+        },
+        {
+            "name": "Run Shell",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}\\speakez\\manage.py",
+            "cwd": "${workspaceFolder}\\speakez",
+            "args": [
+                "shell"
+            ],
+            "django": true
         }
     ]
 }
