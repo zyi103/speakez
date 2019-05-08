@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load fontawesome %}
+
+{% block title %}Message{% endblock %}
+
+{% block content %}
+<div class="row text-center bg-secondary">
+    <div class="col-sm-12">
+        <div class="login-title">
+            <h2 class="text-white">View Messages</h2>
+        </div>
+    </div>
+</div>
+<h1>{{ message.title }}</h1>
+<ul>
+    <li>Date and Time Created: {{message.date_time_created}}</li>
+    <li>Duration: {{message.duration}} seconds</li>
+    <li>Content: {{message.content}}</li>
+    <li>Category/Categories:</li>
+{% for category in message.category.all %}
+    {{ category.title }}
+{% endfor %}
+    <li>Audio: {{message.audio}}</li>
+</ul>
+{% endblock %}
