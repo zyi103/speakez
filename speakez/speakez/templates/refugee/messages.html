@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load fontawesome %}
+
+{% block title %}View Messages{% endblock %}
+
+{% block content %}
+<div class="row text-center bg-secondary">
+    <div class="col-sm-12">
+        <div class="login-title">
+            <h2 class="text-white">View Messages</h2>
+        </div>
+    </div>
+</div>
+{% if messages %}
+    <ul>
+    {% for message in messages %}
+        <li><a href="{% url 'call_message_detail' message.id.int %}">{{ message }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No messages are available.</p>
+{% endif %}
+{% endblock %}
