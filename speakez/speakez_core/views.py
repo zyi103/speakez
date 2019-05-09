@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from .models import Refugee, Category, CallMessage
 from .forms import CallMessageForm
+import pdb;
 
 @login_required(login_url='/accounts/login/')
 def dashboard(request):
@@ -14,10 +15,14 @@ def list_recipients(request):
     recipients = Refugee.objects.all()
     return render(request, 'refugee/list.html', context={"refugees": recipients})
     
-def list_messages(request):
-    form = CallMessageForm(request.POST or None)
+def edit_messages(request):
+    # pdb.set_trace()
+    form = CallMessageForm(request.POST, request.FILES)
     if form.is_valid(): 
         form.save()
+
+    # if request.method == 'POST':
+    #     uploaded_audio = request.FILES['']
 
     return render(request, 'message/message-list.html', context = {"form" : form})
     

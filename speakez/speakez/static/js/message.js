@@ -4,6 +4,9 @@ let audio = document.querySelector('audio');
 let startBtn = document.querySelector('.js-start');
 let stopBtn = document.querySelector('.js-stop');
 
+
+// audio recorder
+
 window.URL = window.URL || window.webkitURL;
 /** 
  * Detecte the correct AudioContext for the browser 
@@ -48,3 +51,6 @@ startBtn.addEventListener('click', () => {
         console.warn('navigator.getUserMedia not present');
     }
 });
+
+
+// form submition

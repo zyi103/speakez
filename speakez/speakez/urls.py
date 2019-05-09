@@ -22,7 +22,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', views.dashboard),
     path('admin/recipients', views.list_recipients),
-    path('admin/messages', views.list_messages),
+    path('admin/messages', views.edit_messages),
     path('admin/view_messages', views.list_call_messages),
     path('admin/view_messages/<int:call_message_id>/', views.call_message_detail, name='call_message_detail'),
     url(r'^', RedirectView.as_view(url='/accounts/login/'))
