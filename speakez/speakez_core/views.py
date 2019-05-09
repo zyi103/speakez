@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from .models import Refugee, Category, CallMessage
+from .forms import CallMessageForm
 
 @login_required(login_url='/accounts/login/')
 def dashboard(request):
@@ -14,7 +15,11 @@ def list_recipients(request):
     return render(request, 'refugee/list.html', context={"refugees": recipients})
     
 def list_messages(request):
-    return render(request, 'message/message-list.html')
+    form = CallMessageForm(request.POST or None)
+    if form.is_valid(): 
+        form.save()
+
+    return render(request, 'message/message-list.html', context = {"form" : form})
     
 
 def list_call_messages(request):
