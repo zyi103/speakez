@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'speakez_api',
     'speakez_core',
     'speakez',
+    'rest_framework',
     'graphene_django',
     'bootstrap4',
     'fontawesome',
@@ -46,6 +47,11 @@ INSTALLED_APPS = [
 
 GRAPHENE = {
     'SCHEMA': 'speakez.schema.schema' # Where your Graphene schema lives
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
 }
 
 MIDDLEWARE = [
