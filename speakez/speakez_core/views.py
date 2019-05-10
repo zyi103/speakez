@@ -87,3 +87,14 @@ def call_message_detail(request, call_message_id):
     call_message = get_object_or_404(CallMessage, pk=call_message_id)
     return render(request, 'refugee/message_detail.html', context={"message": call_message})
 
+#need to add to admin.html and urls
+class CallMessageView(FormView):
+    template_name = 'refugee/record_message.html'
+    form_class = CallMessageForm
+    success_url = '/record_message/'
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        form.send_email()
+        return super().form_valid(form)
