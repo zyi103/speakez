@@ -27,7 +27,6 @@
         <button onclick="setduration()">set duration</button>
 
         <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
-            {{ form.audio }}
             {{ form.duration }}
             {{ form.title }}
             {{ form.content }}
@@ -60,6 +59,9 @@
 
 <script src="{% static "js/message.js" %}"></script>
 <script tpye="application/javascript">
+    var audioBlob;
+    var audioBin
+
     function setduration() {
         var audio = document.getElementById("audio")
 
@@ -68,15 +70,12 @@
         xhr.open('GET', audio.src, true)
         xhr.responseType = 'blob'
         xhr.onload = function (e) {
+            audioBlob = this.response
             if (this.status == 200) {
                 // myBlob is now the blob that the object URL pointed to.
                 var reader = new FileReader()
                 reader.onload = function () {
-                    const view = new Int8Array(reader.result);
-
-                    bin = [...view].map((n) => n.toString(2)).join(' ');
-
-                    console.log(bin);
+                    audioBin = reader.result
                 }
                 reader.readAsBinaryString(this.response);
             }
@@ -88,6 +87,7 @@
     }
 
     $(document).ready(function () {
+
         // getting csrftoken
         var csrftoken = Cookies.get('csrftoken');
         function csrfSafeMethod(method) {
@@ -101,32 +101,35 @@
                 }
             }
         });
-
-        $('form').submit(function (e) {
-            e.preventDefault();
-
-            var formData = new FormData();
-
-            formData.append("audio", bin);
-            formData.append("title", document.getElementById("id_title").value);
-            formData.append("content", document.getElementById("id_content").value);
-            formData.append("duration", audio.duration);
-
-
-            $.ajax({
-                url: '/admin/messages',
-                data: formData,
-                processData: false,
-                contentType: false,
-                type: 'POST',
-                success: function (data) {
-                    alert(JSON.stringify(data));
-                },
-                error: function (e) {
-                    alert(e.toString())
-                }
-            });
-        })
     });
+
+    $('form').submit(function (e) {
+
+        e.preventDefault();
+        
+
+        var formData = new FormData();
+        var audioTitle = document.getElementById("id_title").value
+
+        console.log(audioBlob)
+        formData.append("audio", audioBlob, audioTitle);
+        formData.append("title", audioTitle);
+        formData.append("content", document.getElementById("id_content").value);
+        formData.append("duration", audio.duration);
+
+
+        $.ajax({
+            url: '/admin/messages',
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function (data) {
+            },
+            error: function (e) {
+                alert(e.toString())
+            }
+        });
+    })
 </script>
 {% endblock content %}

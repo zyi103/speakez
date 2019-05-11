@@ -19,7 +19,6 @@ def edit_messages(request):
     # pdb.set_trace()
     form = CallMessageForm(request.POST, request.FILES)
     print(request.FILES)
-    print(request.POST)
 
     if form.is_valid(): 
         print("valid")
