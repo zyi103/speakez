@@ -23,6 +23,7 @@
             <button class="col-sm-4 btn btn-primary js-stop" disabled>{% fontawesome_icon 'square' %}</button>
             <button class="col-sm-2 btn btn-primary">{% fontawesome_icon 'circle' %}</button>
         </div>
+        <!-- <input id="id_audio" hidden> -->
         <button onclick="setduration()">set duration</button>
 
         <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
@@ -54,6 +55,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
 
 <script src="{% static "js/message.js" %}"></script>
 <script tpye="application/javascript">
@@ -66,14 +69,16 @@
         xhr.responseType = 'blob'
         xhr.onload = function (e) {
             if (this.status == 200) {
-                var audioBlob = this.response;
                 // myBlob is now the blob that the object URL pointed to.
                 var reader = new FileReader()
                 reader.onload = function () {
-                    document.getElementById("id_audio").value = reader.result;
-                    console.log(reader.result)
+                    const view = new Int8Array(reader.result);
+
+                    bin = [...view].map((n) => n.toString(2)).join(' ');
+
+                    console.log(bin);
                 }
-                bin = reader.readAsBinaryString(audioBlob);
+                reader.readAsBinaryString(this.response);
             }
         };
         xhr.send();
@@ -82,29 +87,46 @@
         document.getElementById("id_duration").value = audio.duration;
     }
 
-    // $('form').submit(function (e) {
-    //     e.preventDefault();
+    $(document).ready(function () {
+        // getting csrftoken
+        var csrftoken = Cookies.get('csrftoken');
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
 
-    //     var formData = new FormData();
+        $('form').submit(function (e) {
+            e.preventDefault();
 
-    //     formData.append("audio", document.getElementById("id_content").value);
-    //     formData.append("title", document.getElementById("id_title").value);
-    //     formData.append("content", document.getElementById("id_content").value);
-    //     formData.append("duration", audio.duration);
+            var formData = new FormData();
 
-    //     $.ajax({
-    //         url: '/ajax/message-form',
-    //         data: formData,
-    //         processData: false,
-    //         contentType: false,
-    //         type: 'POST',
-    //         success: function (data) {
-    //             alert(data);
-    //         },
-    //         error: function (e) {
-    //             alert(e)
-    //         }
-    //     });
-    // })
+            formData.append("audio", bin);
+            formData.append("title", document.getElementById("id_title").value);
+            formData.append("content", document.getElementById("id_content").value);
+            formData.append("duration", audio.duration);
+
+
+            $.ajax({
+                url: '/admin/messages',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (data) {
+                    alert(JSON.stringify(data));
+                },
+                error: function (e) {
+                    alert(e.toString())
+                }
+            });
+        })
+    });
 </script>
 {% endblock content %}
