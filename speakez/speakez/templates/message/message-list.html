@@ -25,7 +25,7 @@
         </div>
         <button onclick="setduration()">set duration</button>
 
-        <form method="POST"> {% csrf_token %}
+        <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
             {{ form.audio }}
             {{ form.duration }}
             {{ form.title }}
@@ -70,7 +70,7 @@
                 // myBlob is now the blob that the object URL pointed to.
                 var reader = new FileReader()
                 reader.onload = function () {
-                    document.getElementsByName("csrfmiddlewaretoken").value = reader.result;
+                    document.getElementById("id_audio").value = reader.result;
                     console.log(reader.result)
                 }
                 bin = reader.readAsBinaryString(audioBlob);
@@ -81,5 +81,30 @@
         // set duration
         document.getElementById("id_duration").value = audio.duration;
     }
+
+    // $('form').submit(function (e) {
+    //     e.preventDefault();
+
+    //     var formData = new FormData();
+
+    //     formData.append("audio", document.getElementById("id_content").value);
+    //     formData.append("title", document.getElementById("id_title").value);
+    //     formData.append("content", document.getElementById("id_content").value);
+    //     formData.append("duration", audio.duration);
+
+    //     $.ajax({
+    //         url: '/ajax/message-form',
+    //         data: formData,
+    //         processData: false,
+    //         contentType: false,
+    //         type: 'POST',
+    //         success: function (data) {
+    //             alert(data);
+    //         },
+    //         error: function (e) {
+    //             alert(e)
+    //         }
+    //     });
+    // })
 </script>
 {% endblock content %}

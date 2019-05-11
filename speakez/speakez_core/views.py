@@ -19,7 +19,13 @@ def edit_messages(request):
     # pdb.set_trace()
     form = CallMessageForm(request.POST, request.FILES)
     if form.is_valid(): 
+        print("valid")
+        print(form)
+        print(request.POST)
+        print(request.FILES)
         form.save()
+    else:
+        print("not valid")
 
     # if request.method == 'POST':
     #     uploaded_audio = request.FILES['']
