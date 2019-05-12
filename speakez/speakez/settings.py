@@ -42,7 +42,11 @@ INSTALLED_APPS = [
     'graphene_django',
     'bootstrap4',
     'fontawesome',
+    'crispy_forms',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 
 GRAPHENE = {
     'SCHEMA': 'speakez.schema.schema' # Where your Graphene schema lives
@@ -88,6 +92,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'TEST': {
+          # this gets you in-memory sqlite for tests, which is fast
+          'ENGINE': 'django.db.backends.sqlite3',
+        }
     }
 }
 

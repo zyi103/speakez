@@ -3,6 +3,9 @@ let context;
 let audio = document.querySelector('audio');
 let startBtn = document.querySelector('.js-start');
 let stopBtn = document.querySelector('.js-stop');
+let audioBlob;
+
+// audio recorder
 
 window.URL = window.URL || window.webkitURL;
 /** 
@@ -48,3 +51,61 @@ startBtn.addEventListener('click', () => {
         console.warn('navigator.getUserMedia not present');
     }
 });
+
+
+// form submition
+$(document).ready(function () {
+
+    // getting csrftoken
+    var csrftoken = Cookies.get('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+});
+
+$('form').submit(function (e) {
+    e.preventDefault()
+
+    var xhr = new XMLHttpRequest()
+    xhr.open('GET', document.getElementById("audio").src, true)
+    xhr.responseType = 'blob'
+    xhr.onload = function (e) {
+        if (this.status == 200) {
+            audioBlob = this.response
+            console.log(audioBlob)
+
+            var formData = new FormData();
+            formData.append("audio", audioBlob, document.getElementById("id_title").value + '.wav');
+            formData.append("title", document.getElementById("id_title").value);
+            formData.append("content", document.getElementById("id_content").value);
+            formData.append("duration", audio.duration);
+
+
+            console.log(formData)
+            $.ajax({
+                url: '/admin/messages',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (data) {
+
+                },
+                error: function (e) {
+                    alert(e.toString())
+                }
+            });
+        } else {
+            alert("failed to get audio message")
+        }
+    };
+    xhr.send()
+})
