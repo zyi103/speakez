@@ -20,7 +20,7 @@ def edit_messages(request):
     if form.is_valid(): 
         form.save()
 
-    return render(request, 'message/message-list.html', context = {"form" : form})
+    return render(request, 'message/edit-message.html', context = {"form" : form})
     
 
 def list_call_messages(request):
