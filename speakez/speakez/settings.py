@@ -42,7 +42,11 @@ INSTALLED_APPS = [
     'graphene_django',
     'bootstrap4',
     'fontawesome',
+    'crispy_forms',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 
 GRAPHENE = {
     'SCHEMA': 'speakez.schema.schema' # Where your Graphene schema lives

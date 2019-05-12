@@ -4,6 +4,8 @@
 
 {% block title %}Audio Messages{% endblock %}
 
+{% load crispy_forms_tags %}
+
 {% block content %}
 
 <!-- reuseability? -->
@@ -24,12 +26,11 @@
             <button class="col-sm-2 btn btn-primary">{% fontawesome_icon 'circle' %}</button>
         </div>
         <!-- <input id="id_audio" hidden> -->
-        <button onclick="setduration()">set duration</button>
 
         <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
-            {{ form.title }}
-            {{ form.content }}
-            <input type="submit">
+            {{ form.title|as_crispy_field }}
+            {{ form.content|as_crispy_field }}
+            <input class="btn btn-primary" type="submit">
         </form>
     </div>
     <div class="col-sm-1">
