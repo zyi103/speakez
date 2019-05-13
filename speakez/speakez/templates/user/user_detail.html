@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load rest_framework %}
+{% load fontawesome %}
+
+{% block title %}Users{% endblock %}
+
+{% block content %}
+<div class="row text-center bg-secondary">
+    <div class="col-sm-12">
+        <div class="login-title">
+            <h2 class="text-white">Users</h2>
+        </div>
+    </div>
+</div>
+
+<html><body>
+
+<h1>User Info- {{user.username}}</h1>
+
+<form action="{% url 'user_detail' user.username %}" method="POST">
+    {% csrf_token %}
+    {% render_form serializer %}
+    <input type="submit" value="Save">
+</form>
+<ul></ul>
+<a href="{% url 'change_password' user.username %}">Change Password</a>
+<ul></ul>
+<a href="{% url 'delete_user' user.username %}">Delete User</a>
+</body></html>
+{% endblock %}

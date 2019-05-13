@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated   
-from .serializers import UserSerializer, ChangePasswordSerializer
+from .serializers import UserSerializer, NewUserSerializer, ChangePasswordSerializer
 from .forms import CallMessageForm
 from django.views.generic.edit import FormView
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 
 class UserList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'user_list.html'
+    template_name = 'user/user_list.html'
 
     def get(self, request):
         queryset = User.objects.all().order_by('-date_joined')
@@ -24,26 +24,60 @@ class UserList(APIView):
 
 class UserDetail(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'refugees/user_detail.html'
+    template_name = 'user/user_detail.html'
+    lookup_field = 'username'
 
-    def get(self, request, pk):
-        user = get_object_or_404(User, pk=pk)
-        serializer = UserSerializer(user)
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        serializer = UserSerializer(user, context = {'request': request})
         return Response({'serializer': serializer, 'user': user})
 
-    def post(self, request, pk):
-        user = get_object_or_404(User, pk=pk)
-        serializer = UserSerializer(user, data=request.data)
+    def post(self, request, username):
+        user = get_object_or_404(User, username=username)
+        serializer = UserSerializer(user, data=request.data, context = {'request': request})
         if not serializer.is_valid():
             return Response({'serializer': serializer, 'user': user})
         serializer.save()
-        return redirect('user-list')
+        return redirect('user_list')
+
+
+class NewUser(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'user/new_user.html'
+
+    def get(self, request):
+        serializer = NewUserSerializer(context = {'request': request})
+        return Response({'serializer': serializer})
+
+    def post(self, request):
+        user = User.objects.create_user(request.data)
+        serializer = NewUserSerializer(user, data=request.data, context = {'request': request})
+        if not serializer.is_valid():
+            return Response({'serializer': serializer, 'user': user})
+        serializer.save()
+        return redirect('user_list')
+
+
+class DeleteUser(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'user/delete_user.html'
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        return Response({'user': user})
+
+    def post(self, request, username):
+        user = get_object_or_404(User, username=username)
+        user.delete()
+        return redirect('user_list')
 
 
 class ChangePasswordView(generics.UpdateAPIView):
         """
         An endpoint for changing password.
         """
+#        renderer_classes = [TemplateHTMLRenderer]
+#        template_name = 'user/change_password.html'
         serializer_class = ChangePasswordSerializer
         model = User
         permission_classes = (IsAuthenticated,)
@@ -87,14 +121,3 @@ def call_message_detail(request, call_message_id):
     call_message = get_object_or_404(CallMessage, pk=call_message_id)
     return render(request, 'refugee/message_detail.html', context={"message": call_message})
 
-#need to add to admin.html and urls
-class CallMessageView(FormView):
-    template_name = 'refugee/record_message.html'
-    form_class = CallMessageForm
-    success_url = '/record_message/'
-
-    def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        form.send_email()
-        return super().form_valid(form)
