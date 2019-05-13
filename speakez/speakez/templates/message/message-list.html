@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load fontawesome %}
+{% load static %}
+
+{% block title %}Audio Messages{% endblock %}
+
+{% block content %}
+
+<!-- reuseability? -->
+<div class="row text-center bg-secondary">
+    <div class="col-sm-12">
+        <div class="login-title">
+            <h2 class="text-white">Select/Record an Audio Message</h2>
+        </div>
+    </div>
+</div> 
+
+<div class="row">
+    <div class="col-sm-6">
+        <audio controls autoplay id="audio"></audio>
+        <div class="row justify-content-around">
+            <button class="col-sm-4 btn btn-primary js-start">{% fontawesome_icon 'microphone' %}</button>
+            <button class="col-sm-4 btn btn-primary js-stop" disabled>{% fontawesome_icon 'square' %}</button>
+            <button class="col-sm-2 btn btn-primary">{% fontawesome_icon 'circle' %}</button>
+        </div>
+        <!-- <input id="id_audio" hidden> -->
+        <button onclick="setduration()">set duration</button>
+
+        <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+            {{ form.audio }}
+            {{ form.duration }}
+            {{ form.title }}
+            {{ form.content }}
+            <input type="submit">
+        </form>
+    </div>
+    <div class="col-sm-1">
+        <h3>OR</h1>
+    </div>
+    <div class="col-sm-5">
+        <p>Step1: Select Category to view a list</p>
+        <div class="col-sm-10 input-group">
+            <select class="custom-select" id="inputGroupSelect04">
+                <option selected>Choose...</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script src="{% static "js/recorder.js" %}"></script>
+<script src="https://cdn.webrtc-experiment.com/MediaStreamRecorder.js"> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+
+<script src="{% static "js/message.js" %}"></script>
+<script tpye="application/javascript">
+    function setduration() {
+        var audio = document.getElementById("audio")
+
+        // set audio
+        var xhr = new XMLHttpRequest()
+        xhr.open('GET', audio.src, true)
+        xhr.responseType = 'blob'
+        xhr.onload = function (e) {
+            if (this.status == 200) {
+                // myBlob is now the blob that the object URL pointed to.
+                var reader = new FileReader()
+                reader.onload = function () {
+                    const view = new Int8Array(reader.result);
+
+                    bin = [...view].map((n) => n.toString(2)).join(' ');
+
+                    console.log(bin);
+                }
+                reader.readAsBinaryString(this.response);
+            }
+        };
+        xhr.send();
+
+        // set duration
+        document.getElementById("id_duration").value = audio.duration;
+    }
+
+    $(document).ready(function () {
+        // getting csrftoken
+        var csrftoken = Cookies.get('csrftoken');
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $('form').submit(function (e) {
+            e.preventDefault();
+
+            var formData = new FormData();
+
+            formData.append("audio", bin);
+            formData.append("title", document.getElementById("id_title").value);
+            formData.append("content", document.getElementById("id_content").value);
+            formData.append("duration", audio.duration);
+
+
+            $.ajax({
+                url: '/admin/messages',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (data) {
+                    alert(JSON.stringify(data));
+                },
+                error: function (e) {
+                    alert(e.toString())
+                }
+            });
+        })
+    });
+</script>
+{% endblock content %}
