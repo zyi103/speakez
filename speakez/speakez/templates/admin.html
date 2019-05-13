@@ -19,6 +19,9 @@
             <p>You are not logged in</p>
             <a href="{% url 'login' %}">login</a>
         {% endif %}
+        <a href="/admin/view_users/" class="btn btn-primary">
+            View Users
+        </a>
         <a href="/accounts/logout" class="btn btn-primary">
             {% fontawesome_icon 'sign-out' color='white' large=True %}
             Logout
