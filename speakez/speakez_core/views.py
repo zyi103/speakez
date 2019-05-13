@@ -50,14 +50,14 @@ class NewUser(APIView):
         return Response({'serializer': serializer})
 
     def post(self, request):
-        user = User.objects.create_user(request.data)
+        user = User.objects.create_user(request.data.get("username"), email=request.data.get("email"), password=request.data.get("password"))
         serializer = NewUserSerializer(user, data=request.data, context = {'request': request})
         if not serializer.is_valid():
             return Response({'serializer': serializer, 'user': user})
         serializer.save()
         return redirect('user_list')
 
-
+#deleting self causes forced logout
 class DeleteUser(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'user/delete_user.html'
@@ -72,6 +72,8 @@ class DeleteUser(APIView):
         return redirect('user_list')
 
 
+#need to assign template to this view
+#changing password causes forced logout
 class ChangePasswordView(generics.UpdateAPIView):
         """
         An endpoint for changing password.

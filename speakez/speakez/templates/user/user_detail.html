@@ -15,15 +15,13 @@
 
 <html><body>
 
-<h1>User Info- {{user.username}}</h1>
+<h1>Edit User- {{user.username}}</h1>
 
 <form action="{% url 'user_detail' user.username %}" method="POST">
     {% csrf_token %}
     {% render_form serializer %}
     <input type="submit" value="Save">
 </form>
-<ul></ul>
-<a href="{% url 'change_password' user.username %}">Change Password</a>
 <ul></ul>
 <a href="{% url 'delete_user' user.username %}">Delete User</a>
 </body></html>
