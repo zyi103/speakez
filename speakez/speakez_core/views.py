@@ -28,9 +28,11 @@ def list_recipients(request):
 
 @login_required(login_url='/accounts/login/')
 def edit_messages(request):
-    form = CallMessageForm(request.POST, request.FILES)
-    if form.is_valid():
-        form.save()
+    form = CallMessageForm()
+    if request.method.lower() == "post":
+        form = CallMessageForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
     return render(request, 'message/edit_message.html', context={"form": form})
 
 
@@ -63,6 +65,7 @@ def create_user(request):
     return render(request, 'registration/signup.html',context={"form" : form})
 
 @login_required(login_url='/accounts/login/')
+@staff_member_required
 def user_list(request):
     users = User.objects.all().values_list('username', 'email','first_name','last_name')
     users_json = json.dumps(list(users), cls=DjangoJSONEncoder)
