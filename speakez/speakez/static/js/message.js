@@ -91,7 +91,7 @@ $('form').submit(function (e) {
 
             console.log(formData)
             $.ajax({
-                url: '/admin/messages',
+                url: '/admin/edit_messages',
                 data: formData,
                 processData: false,
                 contentType: false,
