@@ -23,6 +23,8 @@ from speakez_core import views
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/create_user', views.create_user),
+    path('accounts/users', views.user_list),
     path('admin/', views.dashboard),
     path('admin/recipients', views.list_recipients),
     path('admin/edit_messages', views.edit_messages),

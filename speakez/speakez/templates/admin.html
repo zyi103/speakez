@@ -19,6 +19,11 @@
             <p>You are not logged in</p>
             <a href="{% url 'login' %}">login</a>
         {% endif %}
+        {% if user.is_superuser %}
+            <a href="/accounts/create_user" class="btn btn-primary">
+                Create New User
+            </a>
+        {% endif %}
         <a href="/accounts/logout" class="btn btn-primary">
             {% fontawesome_icon 'sign-out' color='white' large=True %}
             Logout
