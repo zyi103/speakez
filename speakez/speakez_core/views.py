@@ -9,24 +9,25 @@ from django.contrib.auth import login, authenticate
 from django.contrib.admin.views.decorators import staff_member_required
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core import serializers
 
 
 
 from speakez_core.forms import SignUpForm
 
 
-@login_required(login_url='/accounts/login/')
+@login_required 
 def dashboard(request):
     return render(request, template_name='admin.html')
 
 
-@login_required(login_url='/accounts/login/')
+@login_required 
 def list_recipients(request):
     recipients = Refugee.objects.all()
     return render(request, 'refugee/list.html', context={"refugees": recipients})
 
 
-@login_required(login_url='/accounts/login/')
+@login_required 
 def edit_messages(request):
     form = CallMessageForm()
     if request.method.lower() == "post":
@@ -36,19 +37,21 @@ def edit_messages(request):
     return render(request, 'message/edit_message.html', context={"form": form})
 
 
-@login_required(login_url='/accounts/login/')
+@login_required 
 def list_call_messages(request):
-    ordered_call_messages = CallMessage.objects.order_by('-date_time_created')
-    return render(request, 'message/message_list.html', context={"messages": ordered_call_messages})
+    messages = CallMessage.objects.all().values_list('title', 'category', 'audio', 'duration', 'content')
+    messages_json = json.dumps(list(messages), cls=DjangoJSONEncoder)
+    print(messages_json)
+    return render(request, 'message/message_list.html', context={"messages": messages_json})
 
 
-@login_required(login_url='/accounts/login/')
+@login_required 
 def call_message_detail(request, call_message_id):
     call_message = get_object_or_404(CallMessage, pk=call_message_id)
     return render(request, 'message/message_detail.html', context={"message": call_message})
 
 
-@login_required(login_url='/accounts/login/')
+@login_required 
 @staff_member_required
 def create_user(request):
     if request.method == 'POST':
@@ -64,7 +67,7 @@ def create_user(request):
         form = SignUpForm()
     return render(request, 'registration/signup.html',context={"form" : form})
 
-@login_required(login_url='/accounts/login/')
+@login_required 
 @staff_member_required
 def user_list(request):
     users = User.objects.all().values_list('username', 'email','first_name','last_name')
