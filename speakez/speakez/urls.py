@@ -27,7 +27,7 @@ urlpatterns = [
     path('accounts/users/<str:username>/', views.UserDetail.as_view(), name='user_detail'),
     path('accounts/users/change_password/', views.ChangePasswordView.as_view(), name='change_password'),
     path('accounts/users/<str:username>/delete_user/', views.DeleteUser.as_view(), name='delete_user'),
-    path('admin/', views.dashboard),
+    path('admin/', views.dashboard, name='dashboard'),
     path('admin/logout/', views.logout_view, name='logout'),
     path('admin/recipients/', views.list_recipients),
     path('admin/edit_recipients/', views.edit_recipients),
