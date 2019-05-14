@@ -1,5 +1,5 @@
 from django.forms import ModelForm, Textarea
-from .models import CallMessage, Category
+from .models import CallMessage, Category, Refugee
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -22,3 +22,9 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', )
+
+class RefugeeForm(ModelForm):
+    class Meta:
+        model = Refugee
+        fields = ['first_name','middle_name','last_name','gender','age','phone_number','demographic_info','ethnicity',
+        'street_number','street_name','city','zip_code','emergency_contact','martial_status']

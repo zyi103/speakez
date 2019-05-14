@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Refugee, Category, CallMessage
-from .forms import CallMessageForm
+from .forms import CallMessageForm, RefugeeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -23,8 +23,20 @@ def dashboard(request):
 
 @login_required 
 def list_recipients(request):
-    recipients = Refugee.objects.all()
-    return render(request, 'refugee/list.html', context={"refugees": recipients})
+    recipients = Refugee.objects.all().values_list('first_name','middle_name','last_name','gender','age','phone_number','demographic_info','ethnicity',
+        'city')
+    recipients_json = json.dumps(list(recipients), cls=DjangoJSONEncoder)
+    return render(request, 'refugee/list.html', context={"refugees": recipients_json})
+
+
+@login_required 
+def edit_recipients(request):
+    form = RefugeeForm()
+    if request.method.lower() == "post":
+        form = RefugeeForm(request.POST)
+        if form.is_valid():
+            form.save()
+    return render(request, 'refugee/edit_recipients.html', context={"form": form})
 
 
 @login_required 

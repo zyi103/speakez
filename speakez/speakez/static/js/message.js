@@ -88,16 +88,14 @@ $('form').submit(function (e) {
             formData.append("content", document.getElementById("id_content").value);
             formData.append("duration", audio.duration);
 
-
-            console.log(formData)
             $.ajax({
-                url: '/admin/edit_messages',
+                url: '/admin/edit_messages/',
                 data: formData,
                 processData: false,
                 contentType: false,
                 type: 'POST',
                 success: function (data) {
-
+                    console.log(data)
                 },
                 error: function (e) {
                     alert(e.toString())
