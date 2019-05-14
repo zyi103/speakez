@@ -16,16 +16,18 @@
     let dataSet = {{users|safe}}
 
     $(document).ready(function () {
-        $('#users').DataTable({
+        var table = $('#users').DataTable({
             data: dataSet,
             columns: [
                 { title: "Username" },
                 { title: "Email" },
                 { title: "First Name" },
                 { title: "Last Name" },
-            ],
-            "render": function ( ) {
-                return `<a class="btn btn-primary">View</a>`},
+            ]
+        });
+
+        $('#users tbody').on( 'click', 'td', function () {
+            alert( 'Clicked on cell in visible column: '+table.cell( this ).index().columnVisible );
         });
     });
 </script>
