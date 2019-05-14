@@ -30,7 +30,7 @@
         $('#refugees tbody').on( 'click', 'td', function () {
             let idx = table.cell(this).index().row;
             var id = table.row( idx ).data()[9]
-            window.location.href = `/admin/view_recipients/${id}/`;
+            window.location.href = `/admin/edit_recipients/${id}/`;
         });
     });
 </script>

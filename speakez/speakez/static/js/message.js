@@ -55,7 +55,7 @@ startBtn.addEventListener('click', () => {
 
 // form submition
 $(document).ready(function () {
-
+  
     // getting csrftoken
     var csrftoken = Cookies.get('csrftoken');
     function csrfSafeMethod(method) {

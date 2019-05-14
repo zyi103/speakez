@@ -18,10 +18,9 @@
 {% endif %}
 <script type="application/javascript">
     let dataSet = {{messages|safe}}
-    console.log(dataSet)
 
     $(document).ready(function () {
-        $('#messages').DataTable({
+        let table = $('#messages').DataTable({
             data: dataSet,
             columns: [
                 { title: "title" },
@@ -30,6 +29,11 @@
                 { title: "duration" },
                 { title: "content" },
             ]
+        });
+        $('#messages tbody').on( 'click', 'td', function () {
+            let idx = table.cell(this).index().row;
+            var id = table.row( idx ).data()[5]
+            window.location.href = `/admin/edit_messages/${id}/`;
         });
     });
 </script>

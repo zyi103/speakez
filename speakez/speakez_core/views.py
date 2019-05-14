@@ -160,12 +160,14 @@ def edit_messages(request):
         form = CallMessageForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            return redirect('/admin/view_messages/')
+            # not redirecting
     return render(request, 'message/edit_message.html', context={"form": form})
 
 
 @login_required 
 def list_call_messages(request):
-    messages = CallMessage.objects.all().values_list('title', 'category', 'audio', 'duration', 'content')
+    messages = CallMessage.objects.all().values_list('title', 'category', 'audio', 'duration', 'content','id')
     messages_json = json.dumps(list(messages), cls=DjangoJSONEncoder)
     print(messages_json)
     return render(request, 'message/message_list.html', context={"messages": messages_json})
@@ -173,8 +175,11 @@ def list_call_messages(request):
 
 @login_required 
 def call_message_detail(request, call_message_id):
-    call_message = get_object_or_404(CallMessage, pk=call_message_id)
-    return render(request, 'message/message_detail.html', context={"message": call_message})
+    message_obj = get_object_or_404(CallMessage, pk=call_message_id)
+    form = CallMessageForm(instance=message_obj)
+    audio_link = CallMessage.objects.values('audio').filter(pk=call_message_id)
+    
+    return render(request, 'message/edit_message.html', context={"form": form, 'audio': audio_link[0].get('audio')})
 
 
 @login_required 
