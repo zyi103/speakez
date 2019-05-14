@@ -26,5 +26,5 @@ class SignUpForm(UserCreationForm):
 class RefugeeForm(ModelForm):
     class Meta:
         model = Refugee
-        fields = ['first_name','middle_name','last_name','gender','age','phone_number','demographic_info','ethnicity',
-        'street_number','street_name','city','zip_code','emergency_contact','martial_status']
+        fields = ('first_name','middle_name','last_name','gender','age','phone_number','demographic_info','ethnicity',
+        'street_number','street_name','city','zip_code','emergency_contact','martial_status')
