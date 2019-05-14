@@ -7,13 +7,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'first_name', 'last_name', 'is_staff', 'email')
+        fields = ('url', 'first_name', 'last_name', 'email', 'is_superuser')
 
 
 class NewUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'username', 'first_name', 'last_name', 'is_staff', 'email', 'password')
+        fields = ('url', 'username', 'first_name', 'last_name', 'email', 'password')
 
 
 class ChangePasswordSerializer(serializers.Serializer):

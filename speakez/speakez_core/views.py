@@ -5,7 +5,7 @@ from .forms import CallMessageForm, RefugeeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.admin.views.decorators import staff_member_required
 import json
 from django.core.serializers.json import DjangoJSONEncoder
@@ -193,7 +193,7 @@ def create_user(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('admin/')
+            return redirect('dashboard')
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html',context={"form" : form})
@@ -204,4 +204,9 @@ def user_list(request):
     users = User.objects.all().values_list('username', 'email','first_name','last_name')
     users_json = json.dumps(list(users), cls=DjangoJSONEncoder)
     return render(request, 'registration/userlist.html',context={"users" : users_json})
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return render(request, 'registration/logout.html')
 
