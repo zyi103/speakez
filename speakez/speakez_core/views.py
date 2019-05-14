@@ -69,6 +69,7 @@ class NewUser(APIView):
         serializer.save()
         return redirect('user_list')
 
+
 #deleting self causes forced logout
 class DeleteUser(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -124,9 +125,9 @@ def dashboard(request):
 @login_required 
 def list_recipients(request):
     recipients = Refugee.objects.all().values_list('first_name','middle_name','last_name','gender','age','phone_number','demographic_info','ethnicity',
-        'city')
+        'city','id')
     recipients_json = json.dumps(list(recipients), cls=DjangoJSONEncoder)
-    return render(request, 'refugee/list.html', context={"refugees": recipients_json})
+    return render(request, 'refugee/recipient_list.html', context={"recipient": recipients_json})
 
 
 @login_required 
@@ -136,6 +137,19 @@ def edit_recipients(request):
         form = RefugeeForm(request.POST)
         if form.is_valid():
             form.save()
+    return render(request, 'refugee/edit_recipients.html', context={"form": form})
+
+
+@login_required 
+def recipients_detail(request, recipient_id):
+    recipient_obj = get_object_or_404(Refugee, id=recipient_id)
+    form = RefugeeForm(instance=recipient_obj)
+    if request.method.lower() == "post":
+        form = RefugeeForm(request.POST,instance=recipient_obj)
+        if form.is_valid():
+            form.save()
+            return redirect('/admin/view_recipients/')
+
     return render(request, 'refugee/edit_recipients.html', context={"form": form})
 
 
