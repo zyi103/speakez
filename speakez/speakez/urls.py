@@ -21,16 +21,14 @@ from rest_framework import routers
 from speakez_core import views
 
 urlpatterns = [
-    path('admin/view_users/', views.UserList.as_view(), name='user_list'),
-    path('admin/view_users/new_user/', views.NewUser.as_view(), name='new_user'),
-    path('admin/view_users/change_password/', views.ChangePasswordView.as_view(), name='change_password'),
-    path('admin/view_users/<str:username>/', views.UserDetail.as_view(), name='user_detail'),
-    path('admin/view_users/<str:username>/delete_user/', views.DeleteUser.as_view(), name='delete_user'),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/create_user/', views.create_user),
-    path('accounts/users/', views.user_list),
+    path('accounts/create_user/', views.create_user, name='new_user'),
+    path('accounts/users/', views.user_list, name='user_list'),
     path('accounts/users/<str:username>/', views.UserDetail.as_view(), name='user_detail'),
+    path('accounts/users/change_password/', views.ChangePasswordView.as_view(), name='change_password'),
+    path('accounts/users/<str:username>/delete_user/', views.DeleteUser.as_view(), name='delete_user'),
     path('admin/', views.dashboard),
+    path('admin/logout/', views.logout_view, name='logout'),
     path('admin/recipients/', views.list_recipients),
     path('admin/edit_recipients/', views.edit_recipients),
     path('admin/edit_messages/', views.edit_messages),
