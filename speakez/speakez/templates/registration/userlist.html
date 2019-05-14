@@ -27,7 +27,9 @@
         });
 
         $('#users tbody').on( 'click', 'td', function () {
-            alert( 'Clicked on cell in visible column: '+table.cell( this ).index().columnVisible );
+            let idx = table.cell(this).index().row;
+            var username = table.row( idx ).data()[0]
+            window.location.href = `/accounts/users/${username}/`;
         });
     });
 </script>
