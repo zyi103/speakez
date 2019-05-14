@@ -25,12 +25,13 @@ urlpatterns = [
     path('accounts/create_user/', views.create_user, name='new_user'),
     path('accounts/users/', views.user_list, name='user_list'),
     path('accounts/users/<str:username>/', views.UserDetail.as_view(), name='user_detail'),
+    path('admin/view_users/<str:username>/delete_user/', views.DeleteUser.as_view(), name='delete_user'),
     path('admin/', views.dashboard),
     path('admin/edit_recipients/', views.edit_recipients, name='edit_recipient'),
     path('admin/edit_recipients/<str:recipient_id>/', views.recipients_detail, name='recipient_detail'),
     path('admin/view_recipients/', views.list_recipients, name='recipient_list'),
     path('admin/edit_messages/', views.edit_messages),
     path('admin/edit_messages/<str:call_message_id>/', views.call_message_detail, name='call_message_detail'),
-    path('admin/view_messages/', views.list_call_messages),
+    path('admin/view_messages/', views.list_call_messages, name='message_list'),
     url(r'^', RedirectView.as_view(url='/accounts/login/'))
 ]
