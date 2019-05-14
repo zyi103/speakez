@@ -16,7 +16,6 @@ from django.core import serializers
 from speakez_core.forms import SignUpForm
 
 
-@login_required 
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated   
@@ -25,7 +24,6 @@ from .forms import CallMessageForm
 from django.views.generic.edit import FormView
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
-
 
 class UserList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -118,7 +116,7 @@ class ChangePasswordView(generics.UpdateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@login_required(login_url='/accounts/login/')
+@login_required
 def dashboard(request):
     return render(request, template_name='admin.html')
 

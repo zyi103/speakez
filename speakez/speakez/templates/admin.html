@@ -19,7 +19,6 @@
             <p>You are not logged in</p>
             <a href="{% url 'login' %}">login</a>
         {% endif %}
-<<<<<<< HEAD
         {% if user.is_superuser %}
             <a href="/accounts/create_user/" class="btn btn-primary">
                 Create New User
@@ -28,11 +27,6 @@
                 User list
             </a>
         {% endif %}
-=======
-        <a href="/admin/view_users/" class="btn btn-primary">
-            View Users
-        </a>
->>>>>>> user_form
         <a href="/accounts/logout" class="btn btn-primary">
             {% fontawesome_icon 'sign-out' color='white' large=True %}
             Logout
