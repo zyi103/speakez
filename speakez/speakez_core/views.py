@@ -160,7 +160,6 @@ def edit_messages(request):
         form = CallMessageForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('/admin/view_messages/')
             # not redirecting
     return render(request, 'message/edit_message.html', context={"form": form})
 
@@ -191,8 +190,6 @@ def create_user(request):
             form.save()
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
             return redirect('dashboard')
     else:
         form = SignUpForm()

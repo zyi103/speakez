@@ -94,8 +94,9 @@ $('form').submit(function (e) {
                 processData: false,
                 contentType: false,
                 type: 'POST',
-                success: function (data) {
-                    console.log(data)
+                success: function (url) {
+                    console.log(url)
+                    window.location = '/admin/view_messages/'
                 },
                 error: function (e) {
                     alert(e.toString())

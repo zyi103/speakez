@@ -26,7 +26,7 @@ urlpatterns = [
     path('accounts/users/', views.user_list, name='user_list'),
     path('accounts/users/<str:username>/', views.UserDetail.as_view(), name='user_detail'),
     path('admin/view_users/<str:username>/delete_user/', views.DeleteUser.as_view(), name='delete_user'),
-    path('admin/', views.dashboard),
+    path('admin/', views.dashboard, name='dashboard'),
     path('admin/edit_recipients/', views.edit_recipients, name='edit_recipient'),
     path('admin/edit_recipients/<str:recipient_id>/', views.recipients_detail, name='recipient_detail'),
     path('admin/view_recipients/', views.list_recipients, name='recipient_list'),
