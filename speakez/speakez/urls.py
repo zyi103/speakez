@@ -20,13 +20,16 @@ from django.urls import include, path
 from rest_framework import routers
 from speakez_core import views
 
-
 urlpatterns = [
+    path('admin/view_users/', views.UserList.as_view(), name='user_list'),
+    path('admin/view_users/new_user/', views.NewUser.as_view(), name='new_user'),
+    path('admin/view_users/change_password/', views.ChangePasswordView.as_view(), name='change_password'),
+    path('admin/view_users/<str:username>/', views.UserDetail.as_view(), name='user_detail'),
+    path('admin/view_users/<str:username>/delete_user/', views.DeleteUser.as_view(), name='delete_user'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', views.dashboard),
-    path('admin/recipients', views.list_recipients),
-    path('admin/edit_messages', views.edit_messages),
-    path('admin/view_messages', views.list_call_messages),
+    path('admin/recipients/', views.list_recipients),
+    path('admin/view_messages/', views.list_call_messages),
     path('admin/view_messages/<int:call_message_id>/', views.call_message_detail, name='call_message_detail'),
     url(r'^', RedirectView.as_view(url='/accounts/login/'))
 ]
