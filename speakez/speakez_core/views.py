@@ -1,8 +1,21 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth.decorators import login_required
 from .models import Refugee, Category, CallMessage
+from .forms import CallMessageForm, RefugeeForm
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.admin.views.decorators import staff_member_required
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+from django.core import serializers
+
+
+
+from speakez_core.forms import SignUpForm
+
+
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated   
@@ -11,7 +24,6 @@ from .forms import CallMessageForm
 from django.views.generic.edit import FormView
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
-
 
 class UserList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -56,6 +68,7 @@ class NewUser(APIView):
             return Response({'serializer': serializer, 'user': user})
         serializer.save()
         return redirect('user_list')
+
 
 #deleting self causes forced logout
 class DeleteUser(APIView):
@@ -104,29 +117,93 @@ class ChangePasswordView(generics.UpdateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@login_required(login_url='/accounts/login/')
+@login_required
 def dashboard(request):
     return render(request, template_name='admin.html')
 
 
+@login_required 
 def list_recipients(request):
-    recipients = Refugee.objects.all()
-    return render(request, 'refugee/list.html', context={"refugees": recipients})
-    
+    recipients = Refugee.objects.all().values_list('first_name','middle_name','last_name','gender','age','phone_number','demographic_info','ethnicity',
+        'city','id')
+    recipients_json = json.dumps(list(recipients), cls=DjangoJSONEncoder)
+    return render(request, 'refugee/recipient_list.html', context={"recipient": recipients_json})
+
+
+@login_required 
+def edit_recipients(request):
+    form = RefugeeForm()
+    if request.method.lower() == "post":
+        form = RefugeeForm(request.POST)
+        if form.is_valid():
+            form.save()
+    return render(request, 'refugee/edit_recipients.html', context={"form": form})
+
+
+@login_required 
+def recipients_detail(request, recipient_id):
+    recipient_obj = get_object_or_404(Refugee, id=recipient_id)
+    form = RefugeeForm(instance=recipient_obj)
+    if request.method.lower() == "post":
+        form = RefugeeForm(request.POST,instance=recipient_obj)
+        if form.is_valid():
+            form.save()
+            return redirect('/admin/view_recipients/')
+
+    return render(request, 'refugee/edit_recipients.html', context={"form": form})
+
+
+@login_required 
 def edit_messages(request):
-    form = CallMessageForm(request.POST, request.FILES)
-    if form.is_valid(): 
-        form.save()
+    form = CallMessageForm()
+    if request.method.lower() == "post":
+        form = CallMessageForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            # not redirecting
+    return render(request, 'message/edit_message.html', context={"form": form})
 
-    return render(request, 'message/edit_message.html', context = {"form" : form})
-    
 
+@login_required 
 def list_call_messages(request):
-    ordered_call_messages = CallMessage.objects.order_by('-date_time_created')
-    return render(request, 'message/message_list.html', context={"messages": ordered_call_messages})
+    messages = CallMessage.objects.all().values_list('title', 'category', 'audio', 'duration', 'content','id')
+    messages_json = json.dumps(list(messages), cls=DjangoJSONEncoder)
+    print(messages_json)
+    return render(request, 'message/message_list.html', context={"messages": messages_json})
 
 
+@login_required 
 def call_message_detail(request, call_message_id):
-    call_message = get_object_or_404(CallMessage, pk=call_message_id)
-    return render(request, 'refugee/message_detail.html', context={"message": call_message})
+    message_obj = get_object_or_404(CallMessage, pk=call_message_id)
+    form = CallMessageForm(instance=message_obj)
+    audio_link = CallMessage.objects.values('audio').filter(pk=call_message_id)
+    
+    return render(request, 'message/edit_message.html', context={"form": form, 'audio': audio_link[0].get('audio')})
+
+
+@login_required 
+@staff_member_required
+def create_user(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            return redirect('dashboard')
+    else:
+        form = SignUpForm()
+    return render(request, 'registration/signup.html',context={"form" : form})
+
+@login_required 
+@staff_member_required
+def user_list(request):
+    users = User.objects.all().values_list('username', 'email','first_name','last_name')
+    users_json = json.dumps(list(users), cls=DjangoJSONEncoder)
+    return render(request, 'registration/userlist.html',context={"users" : users_json})
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return render(request, 'registration/logout.html')
 

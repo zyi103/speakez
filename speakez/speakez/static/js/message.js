@@ -55,7 +55,7 @@ startBtn.addEventListener('click', () => {
 
 // form submition
 $(document).ready(function () {
-
+  
     // getting csrftoken
     var csrftoken = Cookies.get('csrftoken');
     function csrfSafeMethod(method) {
@@ -88,16 +88,15 @@ $('form').submit(function (e) {
             formData.append("content", document.getElementById("id_content").value);
             formData.append("duration", audio.duration);
 
-
-            console.log(formData)
             $.ajax({
-                url: '/admin/edit_messages',
+                url: '/admin/edit_messages/',
                 data: formData,
                 processData: false,
                 contentType: false,
                 type: 'POST',
-                success: function (data) {
-
+                success: function (url) {
+                    console.log(url)
+                    window.location = '/admin/view_messages/'
                 },
                 error: function (e) {
                     alert(e.toString())
