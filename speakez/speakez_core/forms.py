@@ -6,5 +6,5 @@ class CallMessageForm(ModelForm):
         model = CallMessage
         fields = ['duration', 'title', 'content', 'audio']
         widgets = {
-            'content': Textarea(attrs={'cols': 60, 'rows': 15}),
+            'content': Textarea(attrs={'cols': 60, 'rows': 10}),
         }

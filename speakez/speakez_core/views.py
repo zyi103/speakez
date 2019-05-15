@@ -113,10 +113,17 @@ def list_recipients(request):
     recipients = Refugee.objects.all()
     return render(request, 'refugee/list.html', context={"refugees": recipients})
     
+def edit_messages(request):
+    form = CallMessageForm(request.POST, request.FILES)
+    if form.is_valid(): 
+        form.save()
+
+    return render(request, 'message/edit_message.html', context = {"form" : form})
+    
 
 def list_call_messages(request):
     ordered_call_messages = CallMessage.objects.order_by('-date_time_created')
-    return render(request, 'refugee/messages.html', context={"messages": ordered_call_messages})
+    return render(request, 'message/message_list.html', context={"messages": ordered_call_messages})
 
 
 def call_message_detail(request, call_message_id):
