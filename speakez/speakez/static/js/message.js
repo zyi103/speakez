@@ -81,7 +81,6 @@ $('form').submit(function (e) {
         if (this.status == 200) {
             audioBlob = this.response
             console.log(audioBlob)
-
             var formData = new FormData();
             formData.append("audio", audioBlob, document.getElementById("id_title").value + '.wav');
             formData.append("title", document.getElementById("id_title").value);
@@ -95,7 +94,6 @@ $('form').submit(function (e) {
                 contentType: false,
                 type: 'POST',
                 success: function (url) {
-                    console.log(url)
                     window.location = '/admin/view_messages/'
                 },
                 error: function (e) {

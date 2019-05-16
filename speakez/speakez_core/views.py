@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.admin.views.decorators import staff_member_required
+from django.conf import settings
 
 import json
 from django.core.serializers.json import DjangoJSONEncoder
@@ -173,10 +174,9 @@ def list_call_messages(request):
 def call_message_detail(request, call_message_id):
     message_obj = get_object_or_404(CallMessage, pk=call_message_id)
     form = CallMessageForm(instance=message_obj)
-    audio_path = CallMessage.objects.values('audio').filter(pk=call_message_id)
-    audio_url = settings.url + audio_link[0].get('audio')
+    message = CallMessage.objects.get(pk=call_message_id)
     
-    return render(request, 'message/edit_message.html', context={"form": form, 'audio': audio_url})
+    return render(request, 'message/edit_message.html', context={"form": form, 'message': message})
 
 
 @login_required 

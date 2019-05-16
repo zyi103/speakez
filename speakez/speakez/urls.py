@@ -18,8 +18,8 @@ from django.views.generic import RedirectView
 from django.urls import include, path
 from rest_framework import routers
 from speakez_core import views
-from django.conf import settings
 from django.conf.urls import url, include
+from django.conf import settings
 from django.conf.urls.static import static
 
 
@@ -36,5 +36,10 @@ urlpatterns = [
     path('admin/edit_messages/', views.edit_messages),
     path('admin/edit_messages/<str:call_message_id>/', views.call_message_detail, name='call_message_detail'),
     path('admin/view_messages/', views.list_call_messages, name='message_list'),
-    url(r'^', RedirectView.as_view(url='/accounts/login/'))
+    # url(r'^', RedirectView.as_view(url='/accounts/login/'))
+    # this redirect will not allow websever to serve message from media file.
+    # use 404 redirect page instead
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+print (settings.DEBUG)
+print (settings.MEDIA_ROOT)
