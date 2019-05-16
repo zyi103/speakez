@@ -7,14 +7,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.admin.views.decorators import staff_member_required
+
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 
-
-
 from speakez_core.forms import SignUpForm
-
 
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
@@ -160,7 +158,6 @@ def edit_messages(request):
         form = CallMessageForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            # not redirecting
     return render(request, 'message/edit_message.html', context={"form": form})
 
 
@@ -176,9 +173,10 @@ def list_call_messages(request):
 def call_message_detail(request, call_message_id):
     message_obj = get_object_or_404(CallMessage, pk=call_message_id)
     form = CallMessageForm(instance=message_obj)
-    audio_link = CallMessage.objects.values('audio').filter(pk=call_message_id)
+    audio_path = CallMessage.objects.values('audio').filter(pk=call_message_id)
+    audio_url = settings.url + audio_link[0].get('audio')
     
-    return render(request, 'message/edit_message.html', context={"form": form, 'audio': audio_link[0].get('audio')})
+    return render(request, 'message/edit_message.html', context={"form": form, 'audio': audio_url})
 
 
 @login_required 

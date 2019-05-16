@@ -13,12 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
 from speakez_core import views
 from django.views.generic import RedirectView
 from django.urls import include, path
 from rest_framework import routers
 from speakez_core import views
+from django.conf import settings
+from django.conf.urls import url, include
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
@@ -34,4 +37,4 @@ urlpatterns = [
     path('admin/edit_messages/<str:call_message_id>/', views.call_message_detail, name='call_message_detail'),
     path('admin/view_messages/', views.list_call_messages, name='message_list'),
     url(r'^', RedirectView.as_view(url='/accounts/login/'))
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
