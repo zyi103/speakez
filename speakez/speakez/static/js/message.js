@@ -88,7 +88,6 @@ $('form').submit(function (e) {
             formData.append("duration", audio.duration);
 
             $.ajax({
-                url: '/admin/edit_messages/',
                 data: formData,
                 processData: false,
                 contentType: false,

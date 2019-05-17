@@ -19,8 +19,8 @@
 
 <div class="row">
     <div class="col-sm-6">
-    {% if message %}
-        <audio controls src="{{MEDIA_ROOT}}{{ message.audio.url }}" type="audio/wav" id="audio"></audio>
+    {% if is_update %}
+        <audio controls src="{{ message.audio.url }}" type="audio/wav" id="audio"></audio>
     {% else %}
         <audio controls autoplay id="audio"></audio>
     {% endif %}
@@ -31,7 +31,12 @@
         </div>
         <!-- <input id="id_audio" hidden> -->
 
-        <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+        <form method="POST" {% if is_update %}
+                                action="{% url 'update_message_detail' message.id %}"
+                            {% else %}
+                                action="{% url 'add_message' %}"
+                            {% endif %} 
+            enctype="multipart/form-data"> {% csrf_token %}
             {{ form.title|as_crispy_field }}
             {{ form.content|as_crispy_field }}
             <input class="btn btn-primary" type="submit">

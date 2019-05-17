@@ -24,6 +24,11 @@ from django.views.generic.edit import FormView
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
 
+import os, os.path, time
+import datetime
+import unicodedata
+   
+
 class UserList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'user/user_list.html'
@@ -153,13 +158,13 @@ def recipients_detail(request, recipient_id):
 
 
 @login_required 
-def edit_messages(request):
+def add_message(request):
     form = CallMessageForm()
     if request.method.lower() == "post":
         form = CallMessageForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-    return render(request, 'message/edit_message.html', context={"form": form})
+    return render(request, 'message/edit_message.html', context={"form": form, 'is_update': False})
 
 
 @login_required 
@@ -172,11 +177,22 @@ def list_call_messages(request):
 
 @login_required 
 def call_message_detail(request, call_message_id):
-    message_obj = get_object_or_404(CallMessage, pk=call_message_id)
-    form = CallMessageForm(instance=message_obj)
     message = CallMessage.objects.get(pk=call_message_id)
+    form = CallMessageForm(instance=message)
+    if request.method.lower() == "post":
+        form = CallMessageForm(request.POST, request.FILES, instance=message)
+        if form.is_valid():
+            file_path = settings.MEDIA_ROOT + '/uploads/' + message.title + '.wav'
+            print(file_path)
+            filename = time.ctime(os.path.getctime(file_path))
+            print("FILE Create Time:"+filename)
+            file_ctime = "".join([c for c in filename if c.isalpha() or c.isdigit() or c==' ']).rstrip()
+            os.rename(file_path,  file_path + '.OLD_' + file_ctime)
+            # os.remove(file_path)
+            form.save()
+            
     
-    return render(request, 'message/edit_message.html', context={"form": form, 'message': message})
+    return render(request, 'message/edit_message.html', context={"form": form, 'is_update': True, 'message': message})
 
 
 @login_required 
@@ -204,4 +220,5 @@ def user_list(request):
 def logout_view(request):
     logout(request)
     return render(request, 'registration/logout.html')
+
 
