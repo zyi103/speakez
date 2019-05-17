@@ -95,9 +95,10 @@ $('form').submit(function (e) {
                 success: function (url) {
                     window.location = '/admin/view_messages/'
                 },
-                error: function (e) {
-                    alert(e.toString())
-                }
+                error: function(xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                  }
             });
         } else {
             alert("failed to get audio message")

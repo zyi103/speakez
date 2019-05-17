@@ -141,6 +141,7 @@ def edit_recipients(request):
         form = RefugeeForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('recipient_list')
     return render(request, 'refugee/edit_recipients.html', context={"form": form})
 
 
@@ -183,11 +184,8 @@ def call_message_detail(request, call_message_id):
         form = CallMessageForm(request.POST, request.FILES, instance=message)
         if form.is_valid():
             file_path = settings.MEDIA_ROOT + '/uploads/' + message.title + '.wav'
-            print(file_path)
-            filename = time.ctime(os.path.getctime(file_path))
-            print("FILE Create Time:"+filename)
-            file_ctime = "".join([c for c in filename if c.isalpha() or c.isdigit() or c==' ']).rstrip()
-            os.rename(file_path,  file_path + '.OLD_' + file_ctime)
+            print(file_path + '_OLD')
+            os.replace(file_path,  file_path + '_OLD')
             # os.remove(file_path)
             form.save()
             
