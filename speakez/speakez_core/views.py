@@ -9,6 +9,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
 
+from django.forms.models import model_to_dict
+
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
@@ -132,6 +134,12 @@ def list_recipients(request):
         'city','id')
     recipients_json = json.dumps(list(recipients), cls=DjangoJSONEncoder)
     return render(request, 'refugee/recipient_list.html', context={"recipient": recipients_json})
+
+@login_required 
+def select_recipients(request):
+    recipients = Refugee.objects.all()
+    recipients_json = serializers.serialize('json', Refugee.objects.all())
+    return render(request, 'refugee/select_recipients.html', context={"recipient": recipients_json})
 
 
 @login_required 

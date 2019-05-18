@@ -55,7 +55,7 @@ class Category(models.Model):
         verbose_name = 'Category'
         verbose_name_plural = "Categories"
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) 
     date_time_created = models.DateTimeField(_("Date and Time Created"), default=timezone.now)
     title = models.CharField(_("Title"), max_length=250)
 
