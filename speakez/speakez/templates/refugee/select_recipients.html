@@ -36,7 +36,7 @@
                     aTargets: [0],
                     orderable: false,
                     mRender: function (data, type, row) {
-                    return  `<input style="width: 30px; height: 30px;" type="checkbox" id="${row.pk}" name="checkbox" disabled value="checkedValue">`
+                    return  `<input style="width: 30px; height: 30px;" type="checkbox" id="${row.pk}" disabled name="checkbox" value="checkedValue">`
                     }
                 },
                 {
@@ -59,113 +59,33 @@
             var checkbox = document.getElementById(recipientData.pk)
             checkbox.checked = !checkbox.checked
             if (checkbox.checked) {
-                recipientList.push(recipientData)
+                recipientList.push(recipientData.pk)
             } else {
                 for(var i = recipientList.length - 1; i >= 0; i--) {
-                    if(recipientList[i].pk === recipientData.pk) {
+                    if(recipientList[i] === recipientData.pk) {
                         recipientList.splice(i, 1);
                     }
                 }
             }
-        }); 
-
-        // Handle form submission event
-        $('#frm-example').on('submit', function(e){
-            var form = this;
-
-            var rows_selected = table.column(0).checkboxes.selected();
-
-            // Iterate over all selected checkboxes
-            $.each(rows_selected, function(index, rowId){
-                // Create a hidden element
-                $(form).append(
-                    $('<input>')
-                        .attr('type', 'hidden')
-                        .attr('name', 'id[]')
-                        .val(rowId)
-                );
-            });
+            console.log(recipientList)
         });
     })
 
     function logList() {
-        console.log(recipientList)
+        console.log({'data': recipientList})
+        $.ajax({
+            type: "POST",
+            url: '/admin/select_recipients/',
+            data: {'data': recipientList},
+            dataType: 'json',
+            success: function(url) {
+                console.log("success")
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                alert(thrownError);
+            },
+        });
     }
-
-
-    {% comment %} const options = {
-            shouldSort: true,
-            threshold: 0.6,
-            location: 0,
-            distance: 100,
-            maxPatternLength: 32,
-            minMatchCharLength: 1,
-            keys: [
-                "fields.city",
-                "fields.demographic_info",
-                "fields.emergency_contact",
-                "fields.ethnicity",
-                "fields.first_name",
-                "fields.gender",
-                "fields.last_name",
-                "fields.martial_status",
-                "fields.middle_name",
-                "fields.phone_number",
-                "fields.street_name",
-                "fields.street_number",
-                "fields.zip_code",
-            ]
-        }; {% endcomment %}
-
-{% comment %}     
-    $('#searchTextbox').each(function () {
-        var elem = $(this);
-
-        // Save current value of element
-        elem.data('oldVal', elem.val());
-
-        // Look for changes in the value
-        elem.bind("propertychange change click keyup input paste", function (event) {
-            // If value has changed...
-            if (elem.data('oldVal') != elem.val()) {
-                // Updated stored value
-                elem.data('oldVal', elem.val());
-
-                // Do action
-                var result = fuse.search(elem.val());
-                document.getElementById('result').value = JSON.stringify(result)
-                console.log(result) 
-            }
-        });
-    }); {% endcomment %}
-
-   
-   
-    {% comment %} $(document).ready(function () {
-        let table = $('#refugees').DataTable({
-            data: dataSet,
-            columns: [{
-                    title: "first_name"
-                },
-                {
-                    title: "middle_name"
-                },
-                {
-                    title: "last_name"
-                },
-                {
-                    title: "gender"
-                },
-                {
-                    title: "age"
-                },
-            ],
-        });
-        $('#refugees tbody').on('click', 'td', function () {
-            let idx = table.cell(this).index().row;
-            var id = table.row(idx).data()[9]
-            window.location.href = `/admin/edit_recipients/${id}/`;
-        }); {% endcomment %}
-  
 </script>
 {% endblock %}

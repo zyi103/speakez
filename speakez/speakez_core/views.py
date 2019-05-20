@@ -7,7 +7,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.admin.views.decorators import staff_member_required
+
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from django.http import JsonResponse
 
 from django.forms.models import model_to_dict
 
@@ -29,6 +32,8 @@ from rest_framework.views import APIView
 import os, os.path, time
 import datetime
 import unicodedata
+
+
    
 
 class UserList(APIView):
@@ -135,11 +140,26 @@ def list_recipients(request):
     recipients_json = json.dumps(list(recipients), cls=DjangoJSONEncoder)
     return render(request, 'refugee/recipient_list.html', context={"recipient": recipients_json})
 
+
 @login_required 
+@csrf_exempt
 def select_recipients(request):
-    recipients = Refugee.objects.all()
     recipients_json = serializers.serialize('json', Refugee.objects.all())
+    # redirect the select recipients list through view for validation
+    if request.method.lower() == "post":
+        recipients_json = request.POST.getlist('data')
+        print(recipients_json)
+        messages_json = serializers.serialize('json', CallMessage.objects.all())
+        return render(request, 'refugee/select_message.html', context={"recipient": recipients_json, "messages": messages_json})
     return render(request, 'refugee/select_recipients.html', context={"recipient": recipients_json})
+
+
+# @login_required 
+# def select_message(request, recipients):
+#     recipients = recipients.split("delimiter")
+#     messages_json = serializers.serialize('json', CallMessage.objects.all())
+    
+#     return render(request, 'refugee/select_message.html', context={"recipient": recipients, "messages": messages_json})
 
 
 @login_required 
