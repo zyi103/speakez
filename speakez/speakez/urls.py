@@ -24,6 +24,7 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
+    path(r'', RedirectView.as_view(url='/accounts/login/')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/create_user/', views.create_user, name='new_user'),
     path('accounts/users/', views.user_list, name='user_list'),
