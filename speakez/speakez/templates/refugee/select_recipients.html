@@ -21,8 +21,7 @@
         </tr>
     </thead>
 </table>
-<button type="button" class="btn btn-primary" onclick="logList()">Next</button>
-{% comment %} <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.4/fuse.min.js"></script> {% endcomment %}
+<button type="button" class="btn btn-primary" onclick="next()">Next</button>
 <script type="application/javascript">
     let recipient = {{recipient | safe}}
     let recipientList = []
@@ -71,20 +70,29 @@
         });
     })
 
-    function logList() {
+    function next() {
+        window.location = `select_message/${recipientList.join('&')}/`
+    }
+
+    {% comment %} send post request to views.select_recipients 
+    function submit() {
         console.log({'data': recipientList})
         $.ajax({
             type: "POST",
             url: '/admin/select_recipients/',
             data: {'data': recipientList},
-            success: function(url) {
-                console.log("success")
+            success: function(data) {
+                if (data) {
+                    document.write(data);
+                } else {
+                    console.log(data)
+                }
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(xhr.status);
                 console.log(thrownError)
             },
         });
-    }
+    } {% endcomment %}
 </script>
 {% endblock %}

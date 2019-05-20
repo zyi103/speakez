@@ -146,20 +146,22 @@ def list_recipients(request):
 def select_recipients(request):
     recipients_json = serializers.serialize('json', Refugee.objects.all())
     # redirect the select recipients list through view for validation
-    if request.method.lower() == "post":
-        recipients_json = request.POST.getlist('data[]')
-        print(recipients_json)
-        messages_json = serializers.serialize('json', CallMessage.objects.all())
-        return render(request, 'refugee/select_message.html', context={"recipient": recipients_json, "messages": messages_json})
+    # if request.method.lower() == "post":
+    #     recipients_list = request.POST.getlist('data[]')
+    #     if recipients_list != '':
+    #         recipients_url = '&'.join((x) for x in recipients_list)
+    #         print(redirect('select_message', recipients=recipients_url))
+    #         return redirect('select_message', recipients=recipients_url)
     return render(request, 'refugee/select_recipients.html', context={"recipient": recipients_json})
 
 
-# @login_required 
-# def select_message(request, recipients):
-#     recipients = recipients.split("delimiter")
-#     messages_json = serializers.serialize('json', CallMessage.objects.all())
-    
-#     return render(request, 'refugee/select_message.html', context={"recipient": recipients, "messages": messages_json})
+@login_required 
+def select_message(request, recipients):
+    messages_json = serializers.serialize('json', CallMessage.objects.all())
+    recipients = recipients.split('&')
+    print(recipients)
+
+    return render(request, 'refugee/select_message.html', context={"recipient": recipients, "messages": messages_json})
 
 
 @login_required 
