@@ -7,22 +7,22 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.admin.views.decorators import staff_member_required
-
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import JsonResponse
-
 from django.forms.models import model_to_dict
-
-import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
-
-from speakez_core.forms import SignUpForm
 
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated   
+
+from twilio.rest import Client
+from twilio.twiml.voice_response import Play, VoiceResponse
+
+from speakez_core.forms import SignUpForm
+
 from .serializers import UserSerializer, NewUserSerializer, ChangePasswordSerializer
 from .forms import CallMessageForm
 from django.views.generic.edit import FormView
@@ -32,8 +32,8 @@ from rest_framework.views import APIView
 import os, os.path, time
 import datetime
 import unicodedata
-
-
+import json
+import urllib
    
 
 class UserList(APIView):
@@ -160,8 +160,42 @@ def select_message(request, recipients):
     messages_json = serializers.serialize('json', CallMessage.objects.all())
     recipients = recipients.split('&')
     
-    
     return render(request, 'refugee/select_message.html', context={"recipients": recipients, "messages": messages_json})
+
+
+@login_required 
+@csrf_exempt
+def call_recipients(request):
+    if request.method.lower() == "post":
+        recipients = request.POST.getlist('recipients[]')
+        message_id = request.POST.getlist('message[pk]')[0]
+        audio_url = request.POST.getlist('message[audio_url]')[0]
+        print(request.POST.dict)
+        print(recipients)
+        print(message_id)
+        print(audio_url)
+
+        # Twilio call
+        account_sid = 'AC8bbf41596517948ed9b6ad40ac16ff45'
+        auth_token = '34437a52ec6179fef5b40dc49b7303bb'
+        client = Client(account_sid, auth_token)
+        
+        # replace audio_url to the wav file in production env
+        audio_url = 'https://ccrma.stanford.edu/~jos/wav/gtr-nylon22.wav'       
+        xml_string = '<Response><Play>' + audio_url + '</Play></Response>'
+        twimlet_url = urllib.parse.quote_plus(xml_string)
+
+
+        # call = client.calls.create(
+        #                         # xml created by echo Twimlet
+        #                         url= 'https://twimlets.com/echo?Twiml=' + twimlet_url,
+        #                         to='+15153573516',
+        #                         from_='+16414549805'
+        #                     )
+
+        # print(call.sid)
+        
+        return HttpResponse(status=200)
 
 
 @login_required 

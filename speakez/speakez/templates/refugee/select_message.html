@@ -23,7 +23,9 @@
         </tr>
     </thead>
 </table>
+<button type="button" class="btn btn-primary" onclick="call()">Call</button>
 <script type="application/javascript">
+    let recipients = {{recipients | safe}}
     let messages = {{messages | safe}}
     let message
     console.log(messages)
@@ -60,10 +62,33 @@
             var messageData = table.row(this).data()
             var radio = document.getElementById(messageData.pk)
             radio.checked = true 
-            message = messageData.pk
+            message = {
+                pk: messageData.pk,
+                audio_url: messageData.fields.audio
+            }
             console.log(message)
         });
+
     })
 
+    function call() {
+        console.log(`recipients: ${recipients}`)
+        console.log(`message: ${message}`)
+        $.ajax({
+            type: "POST",
+            url: '/admin/call_recipients/',
+            data: {
+                'recipients': recipients,
+                'message': message,
+            },
+            success: function(data) {
+                console.log("sent")
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                console.log(thrownError)
+            },
+        });
+    }
 </script>
 {% endblock %}

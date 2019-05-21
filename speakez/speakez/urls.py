@@ -36,6 +36,7 @@ urlpatterns = [
     path('admin/view_recipients/', views.list_recipients, name='recipient_list'),
     path('admin/select_recipients/', views.select_recipients, name='select_recipients'),
     path('admin/select_recipients/select_message/<recipients>/', views.select_message, name='select_message'),
+    path('admin/call_recipients/', views.call_recipients, name='call_recipients'),
     path('admin/add_messages/', views.add_message, name='add_message'),
     path('admin/view_messages/<str:call_message_id>/', views.call_message_detail, name='update_message_detail'),
     path('admin/view_messages/', views.list_call_messages, name='message_list'),
