@@ -4,6 +4,7 @@
 {% load fontawesome %}
 
 {% block content %}
+
 <div class="row text-center bg-secondary">
     <div class="col-sm-12">
         <div class="login-title">
@@ -12,6 +13,57 @@
     </div>
 </div>
 
+<table id="messages" class="table table-striped table-bordered display" width="100%">
+    <thead>
+        <tr>
+            <th>Selected</th>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Audio</th>
+        </tr>
+    </thead>
+</table>
+<script type="application/javascript">
+    let messages = {{messages | safe}}
+    let message
+    console.log(messages)
 
+    $(document).ready(function () {
+        let table = $('#messages').DataTable({
+            data: messages,
+            columns: [
+                { 
+                    aTargets: [0],
+                    orderable: false,
+                    mRender: function (data, type, row) {
+                    return  `<input style="width: 30px; height: 30px;" type="radio" id="${row.pk}" name="radio">`
+                    }
+                },
+                {
+                    mRender : function ( data, type, row ) { 
+                    return row.fields.title}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return row.fields.content}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return `<audio style="width:100%" controls id="${row.pk}" src='/media/${row.fields.audio}'>`
+                    },
+                    width: "45%",
+                },
+            ],
+            order: [[ 1, 'asc' ]],
+        });
+        $('#messages tbody').on('click', 'tr', function () {
+            var messageData = table.row(this).data()
+            var radio = document.getElementById(messageData.pk)
+            radio.checked = true 
+            message = messageData.pk
+            console.log(message)
+        });
+    })
 
+</script>
 {% endblock %}

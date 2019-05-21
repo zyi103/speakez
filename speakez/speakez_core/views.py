@@ -159,9 +159,9 @@ def select_recipients(request):
 def select_message(request, recipients):
     messages_json = serializers.serialize('json', CallMessage.objects.all())
     recipients = recipients.split('&')
-    print(recipients)
-
-    return render(request, 'refugee/select_message.html', context={"recipient": recipients, "messages": messages_json})
+    
+    
+    return render(request, 'refugee/select_message.html', context={"recipients": recipients, "messages": messages_json})
 
 
 @login_required 
