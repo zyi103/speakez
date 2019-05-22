@@ -101,6 +101,7 @@ class CallLogDetail(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     recipient = models.ForeignKey(Refugee, on_delete=models.CASCADE)
+    call_sid = models.CharField(_("twilio call sid"), max_length=34, blank=False, null=False)
     call_log = models.ForeignKey(CallLog, on_delete=models.CASCADE)
 
     def __str__(self):

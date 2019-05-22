@@ -201,23 +201,31 @@ def call_recipients(request):
         sid_list = []
         for i in range(len(recipients)):
             if i < 5:
-                #logging
-                clog_detail = CallLogDetail(recipient=Refugee(**recipients[i]),call_log=clog)
-                clog_detail.save()
-
+                # xml url created by echo Twimlet
                 url = 'https://twimlets.com/echo?Twiml=' + twimlet_url
                 phone_num = '+1' + recipients[i].get('phone_number')
                 call = client.calls.create(
-                                    # xml created by echo Twimlet
                                     url= url,
                                     to= phone_num,
                                     from_='+16414549805'
                                 )
-                sid_list.append(call.sid)
-            else:
-                return HttpResponse(status=201
 
-        print(sid_list)
+                #logging
+                clog_detail = CallLogDetail(recipient=Refugee(**recipients[i]),call_log=clog, call_sid=call.sid)
+                clog_detail.save()
+                sid_list.append(call.sid)
+                print("[%s] is called by [%s] with [%s] at [%s]" % (clog_detail.recipient.first_name,
+                                                                    clog_detail.call_log.admin_username,
+                                                                    clog_detail.call_log.message_sent, 
+                                                                    clog_detail.call_log.date_time_created))
+            else:
+                return HttpResponse(status=201)
+
+        calls = client.calls.list(limit=5)
+        for record in calls:
+            print(record.sid)
+            print(record.status)
+
         return HttpResponse(status=200)
 
 
