@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import Refugee, Category, CallMessage
+from .models import Refugee, Category, CallMessage, CallLog, CallLogDetail
 from .forms import CallMessageForm, RefugeeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -166,12 +166,17 @@ def select_message(request, recipients):
 @csrf_exempt
 def call_recipients(request):
     if request.method.lower() == "post":
-
         
         # Twilio call
         account_sid = 'AC8bbf41596517948ed9b6ad40ac16ff45'
         auth_token = '34437a52ec6179fef5b40dc49b7303bb'
         client = Client(account_sid, auth_token)
+
+        # logging
+        call_message_id = request.POST.getlist('message[pk]')[0]
+        message_instance = CallMessage.objects.filter(pk=call_message_id).first()
+        clog = CallLog(admin_id=request.user.id, admin_username=request.user.username, message_sent=message_instance)
+        clog.save()
 
         #################################################################
         # getting audio
@@ -196,6 +201,10 @@ def call_recipients(request):
         sid_list = []
         for i in range(len(recipients)):
             if i < 5:
+                #logging
+                clog_detail = CallLogDetail(recipient=Refugee(**recipients[i]),call_log=clog)
+                clog_detail.save()
+
                 url = 'https://twimlets.com/echo?Twiml=' + twimlet_url
                 phone_num = '+1' + recipients[i].get('phone_number')
                 call = client.calls.create(
@@ -204,11 +213,10 @@ def call_recipients(request):
                                     to= phone_num,
                                     from_='+16414549805'
                                 )
-                print(url)
-                print(phone_num)
                 sid_list.append(call.sid)
             else:
-                return HttpResponse(status=201)
+                return HttpResponse(status=201
+
         print(sid_list)
         return HttpResponse(status=200)
 
