@@ -159,7 +159,6 @@ def select_recipients(request):
 def select_message(request, recipients):
     messages_json = serializers.serialize('json', CallMessage.objects.all())
     recipients = recipients.split('&')
-    
     return render(request, 'refugee/select_message.html', context={"recipients": recipients, "messages": messages_json})
 
 
@@ -167,34 +166,50 @@ def select_message(request, recipients):
 @csrf_exempt
 def call_recipients(request):
     if request.method.lower() == "post":
-        recipients = request.POST.getlist('recipients[]')
-        message_id = request.POST.getlist('message[pk]')[0]
-        audio_url = request.POST.getlist('message[audio_url]')[0]
-        print(request.POST.dict)
-        print(recipients)
-        print(message_id)
-        print(audio_url)
 
+        
         # Twilio call
         account_sid = 'AC8bbf41596517948ed9b6ad40ac16ff45'
         auth_token = '34437a52ec6179fef5b40dc49b7303bb'
         client = Client(account_sid, auth_token)
-        
+
+        #################################################################
+        # getting audio
         # replace audio_url to the wav file in production env
-        audio_url = 'https://ccrma.stanford.edu/~jos/wav/gtr-nylon22.wav'       
+        # comment this line out in production env to recieve the actual call message
+        # ===============================================================
+        # PRODUCTION
+        # audio_url = request.POST.getlist('message[audio_url]')[0]
+        # -----------------------------------------------------------
+        # DEVELOPMENT 
+        audio_url = 'https://ccrma.stanford.edu/~jos/wav/gtr-nylon22.wav'  
+        #################################################################
         xml_string = '<Response><Play>' + audio_url + '</Play></Response>'
         twimlet_url = urllib.parse.quote_plus(xml_string)
 
 
-        # call = client.calls.create(
-        #                         # xml created by echo Twimlet
-        #                         url= 'https://twimlets.com/echo?Twiml=' + twimlet_url,
-        #                         to='+15153573516',
-        #                         from_='+16414549805'
-        #                     )
+        # getting phone number 
+        recipients_id = request.POST.getlist('recipients[]')
+        recipients = list(Refugee.objects.filter(pk__in=recipients_id).values())
 
-        # print(call.sid)
-        
+        # calling
+        sid_list = []
+        for i in range(len(recipients)):
+            if i < 5:
+                url = 'https://twimlets.com/echo?Twiml=' + twimlet_url
+                phone_num = '+1' + recipients[i].get('phone_number')
+                call = client.calls.create(
+                                    # xml created by echo Twimlet
+                                    url= url,
+                                    to= phone_num,
+                                    from_='+16414549805'
+                                )
+                print(url)
+                print(phone_num)
+                sid_list.append(call.sid)
+            else:
+                return HttpResponse(status=201)
+        print(sid_list)
         return HttpResponse(status=200)
 
 
