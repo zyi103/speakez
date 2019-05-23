@@ -81,7 +81,6 @@ $('form').submit(function (e) {
         if (this.status == 200) {
             audioBlob = this.response
             console.log(audioBlob)
-
             var formData = new FormData();
             formData.append("audio", audioBlob, document.getElementById("id_title").value + '.wav');
             formData.append("title", document.getElementById("id_title").value);
@@ -89,18 +88,17 @@ $('form').submit(function (e) {
             formData.append("duration", audio.duration);
 
             $.ajax({
-                url: '/admin/edit_messages/',
                 data: formData,
                 processData: false,
                 contentType: false,
                 type: 'POST',
                 success: function (url) {
-                    console.log(url)
                     window.location = '/admin/view_messages/'
                 },
-                error: function (e) {
-                    alert(e.toString())
-                }
+                error: function(xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                  }
             });
         } else {
             alert("failed to get audio message")

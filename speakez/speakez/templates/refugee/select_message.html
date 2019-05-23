@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load static %}
+{% load fontawesome %}
+
+{% block content %}
+
+<div class="row text-center bg-secondary">
+    <div class="col-sm-12">
+        <div class="login-title">
+            <h2 class="text-white">select message</h2>
+        </div>
+    </div>
+</div>
+
+<table id="messages" class="table table-striped table-bordered display" width="100%">
+    <thead>
+        <tr>
+            <th>Selected</th>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Audio</th>
+        </tr>
+    </thead>
+</table>
+<button type="button" class="btn btn-primary" onclick="call()">Call</button>
+<script type="application/javascript">
+    let recipients = {{recipients | safe}}
+    let messages = {{messages | safe}}
+    let message
+    console.log(messages)
+
+    $(document).ready(function () {
+        let table = $('#messages').DataTable({
+            data: messages,
+            columns: [
+                { 
+                    aTargets: [0],
+                    orderable: false,
+                    mRender: function (data, type, row) {
+                    return  `<input style="width: 30px; height: 30px;" type="radio" id="${row.pk}" name="radio">`
+                    }
+                },
+                {
+                    mRender : function ( data, type, row ) { 
+                    return row.fields.title}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return row.fields.content}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return `<audio style="width:100%" controls id="${row.pk}" src='/media/${row.fields.audio}'>`
+                    },
+                    width: "45%",
+                },
+            ],
+            order: [[ 1, 'asc' ]],
+        });
+        $('#messages tbody').on('click', 'tr', function () {
+            var messageData = table.row(this).data()
+            var radio = document.getElementById(messageData.pk)
+            radio.checked = true 
+            message = {
+                pk: messageData.pk,
+                audio_url: messageData.fields.audio
+            }
+            console.log(message)
+        });
+
+    })
+
+    function call() {
+        console.log(`recipients: ${recipients}`)
+        console.log(`message pk: ${message.pk}`)
+        console.log(`audio url: ${message.audio_url}`)
+        $.ajax({
+            type: "POST",
+            url: '/admin/call_recipients/',
+            data: {
+                'recipients': recipients,
+                'message': message,
+            },
+            success: function(data) {
+                console.log("sent")
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                console.log(thrownError)
+            },
+        });
+    }
+</script>
+{% endblock %}

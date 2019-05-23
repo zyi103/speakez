@@ -1,29 +1,40 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import Refugee, Category, CallMessage
+from .models import Refugee, Category, CallMessage, CallLog, CallLogDetail
 from .forms import CallMessageForm, RefugeeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.admin.views.decorators import staff_member_required
-import json
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from django.http import JsonResponse
+from django.forms.models import model_to_dict
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
-
-
-
-from speakez_core.forms import SignUpForm
-
 
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated   
+
+from twilio.rest import Client
+from twilio.twiml.voice_response import Play, VoiceResponse
+
+from speakez_core.forms import SignUpForm
+
 from .serializers import UserSerializer, NewUserSerializer, ChangePasswordSerializer
 from .forms import CallMessageForm
 from django.views.generic.edit import FormView
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
+
+import os, os.path, time
+import datetime
+import unicodedata
+import json
+import urllib
+   
 
 class UserList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -131,12 +142,101 @@ def list_recipients(request):
 
 
 @login_required 
+@csrf_exempt
+def select_recipients(request):
+    recipients_json = serializers.serialize('json', Refugee.objects.all())
+    # redirect the select recipients list through view for validation
+    # if request.method.lower() == "post":
+    #     recipients_list = request.POST.getlist('data[]')
+    #     if recipients_list != '':
+    #         recipients_url = '&'.join((x) for x in recipients_list)
+    #         print(redirect('select_message', recipients=recipients_url))
+    #         return redirect('select_message', recipients=recipients_url)
+    return render(request, 'refugee/select_recipients.html', context={"recipient": recipients_json})
+
+
+@login_required 
+def select_message(request, recipients):
+    messages_json = serializers.serialize('json', CallMessage.objects.all())
+    recipients = recipients.split('&')
+    return render(request, 'refugee/select_message.html', context={"recipients": recipients, "messages": messages_json})
+
+
+@login_required 
+@csrf_exempt
+def call_recipients(request):
+    if request.method.lower() == "post":
+        
+        # Twilio call
+        account_sid = 'AC8bbf41596517948ed9b6ad40ac16ff45'
+        auth_token = '34437a52ec6179fef5b40dc49b7303bb'
+        client = Client(account_sid, auth_token)
+
+        # logging
+        call_message_id = request.POST.getlist('message[pk]')[0]
+        message_instance = CallMessage.objects.filter(pk=call_message_id).first()
+        clog = CallLog(admin_id=request.user.id, admin_username=request.user.username, message_sent=message_instance)
+        clog.save()
+
+        #################################################################
+        # getting audio
+        # replace audio_url to the wav file in production env
+        # comment this line out in production env to recieve the actual call message
+        # ===============================================================
+        # PRODUCTION
+        # audio_url = request.POST.getlist('message[audio_url]')[0]
+        # -----------------------------------------------------------
+        # DEVELOPMENT 
+        audio_url = 'https://ccrma.stanford.edu/~jos/wav/gtr-nylon22.wav'  
+        #################################################################
+        xml_string = '<Response><Play>' + audio_url + '</Play></Response>'
+        twimlet_url = urllib.parse.quote_plus(xml_string)
+
+
+        # getting phone number 
+        recipients_id = request.POST.getlist('recipients[]')
+        recipients = list(Refugee.objects.filter(pk__in=recipients_id).values())
+
+        # calling
+        sid_list = []
+        for i in range(len(recipients)):
+            if i < 5:
+                # xml url created by echo Twimlet
+                url = 'https://twimlets.com/echo?Twiml=' + twimlet_url
+                phone_num = '+1' + recipients[i].get('phone_number')
+                call = client.calls.create(
+                                    url= url,
+                                    to= phone_num,
+                                    from_='+16414549805'
+                                )
+
+                #logging
+                clog_detail = CallLogDetail(recipient=Refugee(**recipients[i]),call_log=clog, call_sid=call.sid)
+                clog_detail.save()
+                sid_list.append(call.sid)
+                print("[%s] is called by [%s] with [%s] at [%s]" % (clog_detail.recipient.first_name,
+                                                                    clog_detail.call_log.admin_username,
+                                                                    clog_detail.call_log.message_sent, 
+                                                                    clog_detail.call_log.date_time_created))
+            else:
+                return HttpResponse(status=201)
+
+        calls = client.calls.list(limit=5)
+        for record in calls:
+            print(record.sid)
+            print(record.status)
+
+        return HttpResponse(status=200)
+
+
+@login_required 
 def edit_recipients(request):
     form = RefugeeForm()
     if request.method.lower() == "post":
         form = RefugeeForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('recipient_list')
     return render(request, 'refugee/edit_recipients.html', context={"form": form})
 
 
@@ -154,14 +254,13 @@ def recipients_detail(request, recipient_id):
 
 
 @login_required 
-def edit_messages(request):
+def add_message(request):
     form = CallMessageForm()
     if request.method.lower() == "post":
         form = CallMessageForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            # not redirecting
-    return render(request, 'message/edit_message.html', context={"form": form})
+    return render(request, 'message/edit_message.html', context={"form": form, 'is_update': False})
 
 
 @login_required 
@@ -174,11 +273,19 @@ def list_call_messages(request):
 
 @login_required 
 def call_message_detail(request, call_message_id):
-    message_obj = get_object_or_404(CallMessage, pk=call_message_id)
-    form = CallMessageForm(instance=message_obj)
-    audio_link = CallMessage.objects.values('audio').filter(pk=call_message_id)
+    message = CallMessage.objects.get(pk=call_message_id)
+    form = CallMessageForm(instance=message)
+    if request.method.lower() == "post":
+        form = CallMessageForm(request.POST, request.FILES, instance=message)
+        if form.is_valid():
+            file_path = settings.MEDIA_ROOT + '/uploads/' + message.title + '.wav'
+            print(file_path + '_OLD')
+            os.replace(file_path,  file_path + '_OLD')
+            # os.remove(file_path)
+            form.save()
+            
     
-    return render(request, 'message/edit_message.html', context={"form": form, 'audio': audio_link[0].get('audio')})
+    return render(request, 'message/edit_message.html', context={"form": form, 'is_update': True, 'message': message})
 
 
 @login_required 
@@ -206,4 +313,5 @@ def user_list(request):
 def logout_view(request):
     logout(request)
     return render(request, 'registration/logout.html')
+
 

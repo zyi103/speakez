@@ -33,7 +33,7 @@
         $('#messages tbody').on( 'click', 'td', function () {
             let idx = table.cell(this).index().row;
             var id = table.row( idx ).data()[5]
-            window.location.href = `/admin/edit_messages/${id}/`;
+            window.location.href = `${id}/`;
         });
     });
 </script>

@@ -144,6 +144,16 @@ USE_TZ = True
 
 STATIC_URL = '/speakez/static/'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
+
+ENV_PATH = os.path.abspath(os.path.dirname(__file__))
+MEDIA_ROOT = os.path.join(ENV_PATH, 'media')
+
+MEDIA_URL = '/media/'
+
 LOGIN_REDIRECT_URL = '/admin/'
 
 LOGIN_URL = '/accounts/login/'

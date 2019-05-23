@@ -13,14 +13,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
 from speakez_core import views
 from django.views.generic import RedirectView
 from django.urls import include, path
 from rest_framework import routers
 from speakez_core import views
+from django.conf.urls import url, include
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
+    path(r'', RedirectView.as_view(url='/accounts/login/')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/create_user/', views.create_user, name='new_user'),
     path('accounts/users/', views.user_list, name='user_list'),
@@ -30,8 +34,13 @@ urlpatterns = [
     path('admin/edit_recipients/', views.edit_recipients, name='edit_recipient'),
     path('admin/edit_recipients/<str:recipient_id>/', views.recipients_detail, name='recipient_detail'),
     path('admin/view_recipients/', views.list_recipients, name='recipient_list'),
-    path('admin/edit_messages/', views.edit_messages),
-    path('admin/edit_messages/<str:call_message_id>/', views.call_message_detail, name='call_message_detail'),
+    path('admin/select_recipients/', views.select_recipients, name='select_recipients'),
+    path('admin/select_recipients/select_message/<recipients>/', views.select_message, name='select_message'),
+    path('admin/call_recipients/', views.call_recipients, name='call_recipients'),
+    path('admin/add_messages/', views.add_message, name='add_message'),
+    path('admin/view_messages/<str:call_message_id>/', views.call_message_detail, name='update_message_detail'),
     path('admin/view_messages/', views.list_call_messages, name='message_list'),
-    url(r'^', RedirectView.as_view(url='/accounts/login/'))
-]
+    # url(r'^', RedirectView.as_view(url='/accounts/login/'))
+    # this redirect will not allow websever to serve message from media file.
+    # use 404 redirect page instead
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

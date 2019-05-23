@@ -27,7 +27,7 @@ class Refugee(models.Model):
     gender = models.CharField(_("Gender"), max_length=100, blank=True, null=True)
     age = models.PositiveIntegerField(_("Age"), default=0)
 
-    phone_number = models.CharField(_("Phone Number"), max_length=25, blank=True, null=True)
+    phone_number = models.CharField(_("Phone Number"), max_length=25, blank=False, null=False)
     demographic_info = models.CharField(_("Demographic Info"), max_length=250, blank=True, null=True)
     ethnicity = models.CharField(_("Ethinicity"), max_length=250, blank=True, null=True)
 
@@ -55,7 +55,7 @@ class Category(models.Model):
         verbose_name = 'Category'
         verbose_name_plural = "Categories"
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) 
     date_time_created = models.DateTimeField(_("Date and Time Created"), default=timezone.now)
     title = models.CharField(_("Title"), max_length=250)
 
@@ -78,3 +78,31 @@ class CallMessage(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class CallLog(models.Model):
+    class Meta:
+        verbose_name = 'Call Log'
+        verbose_name_plural = "Call Logs"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    admin_id = models.CharField(_("caller id"), max_length=250, blank=False, null=False)
+    admin_username = models.CharField(_("caller username"), max_length=250, blank=False, null=False)
+    date_time_created = models.DateTimeField(_("Date and Time Created"), default=timezone.now)
+    message_sent = models.ForeignKey(CallMessage, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.id
+
+class CallLogDetail(models.Model):
+    class Meta:
+        verbose_name = 'Call Log Detail'
+        verbose_name_plural = "Call Log Details"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    recipient = models.ForeignKey(Refugee, on_delete=models.CASCADE)
+    call_sid = models.CharField(_("twilio call sid"), max_length=34, blank=False, null=False)
+    call_log = models.ForeignKey(CallLog, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.id

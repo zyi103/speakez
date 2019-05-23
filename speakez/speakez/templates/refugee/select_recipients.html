@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load static %}
+{% load fontawesome %}
+
+{% block content %}
+<div class="row text-center bg-secondary">
+    <div class="col-sm-12">
+        <div class="login-title">
+            <h2 class="text-white">refugees</h2>
+        </div>
+    </div>
+</div>
+<table id="recipient" class="table table-striped table-bordered display" width="100%">
+    <thead>
+        <tr>
+            <th>Select</th>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Address</th>
+        </tr>
+    </thead>
+</table>
+<button type="button" class="btn btn-primary" onclick="next()">Next</button>
+<script type="application/javascript">
+    let recipient = {{recipient | safe}}
+    let recipientList = []
+    console.log(recipient)
+
+    $(document).ready(function () {
+        let table = $('#recipient').DataTable({
+            data: recipient,
+            columns: [
+                { 
+                    aTargets: [0],
+                    orderable: false,
+                    mRender: function (data, type, row) {
+                    return  `<input style="width: 30px; height: 30px;" type="checkbox" id="${row.pk}" disabled name="checkbox" value="checkedValue">`
+                    }
+                },
+                {
+                    mRender : function ( data, type, row ) { 
+                    return `${row.fields.first_name}, ${row.fields.last_name}`}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return row.fields.phone_number}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return `${row.fields.street_number}<br>${row.fields.street_name}, ${row.fields.city}, ${row.fields.zip_code}`}
+                },
+            ],
+            order: [[ 1, 'asc' ]],
+        });
+        $('#recipient tbody').on('click', 'tr', function () {
+            var recipientData = table.row(this).data()
+            var checkbox = document.getElementById(recipientData.pk)
+            checkbox.checked = !checkbox.checked
+            if (checkbox.checked) {
+                recipientList.push(recipientData.pk)
+            } else {
+                for(var i = recipientList.length - 1; i >= 0; i--) {
+                    if(recipientList[i] === recipientData.pk) {
+                        recipientList.splice(i, 1);
+                    }
+                }
+            }
+            console.log(recipientList)
+        });
+    })
+
+    function next() {
+        window.location = `select_message/${recipientList.join('&')}/`
+    }
+
+    {% comment %} send post request to views.select_recipients 
+    function submit() {
+        console.log({'data': recipientList})
+        $.ajax({
+            type: "POST",
+            url: '/admin/select_recipients/',
+            data: {'data': recipientList},
+            success: function(data) {
+                if (data) {
+                    document.write(data);
+                } else {
+                    console.log(data)
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                console.log(thrownError)
+            },
+        });
+    } {% endcomment %}
+</script>
+{% endblock %}
