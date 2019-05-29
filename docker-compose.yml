@@ -1,0 +1,21 @@
+version: '3'
+services:
+    nginx:
+        container_name: nginx-container
+        build: ./nginx
+        restart: always
+        ports:
+        - "8000:8000"
+        # - "80:80"
+        depends_on:
+        - speakez
+
+    speakez:
+        container_name: speakez-core-container
+        build: ./speakez
+        restart: always
+        # command: uwsgi  --emperor uwsgi.ini
+        # command: uwsgi --ini uwsgi.ini
+        # ports:
+        # - "8002:8000"
+ 
