@@ -287,6 +287,12 @@ def call_message_detail(request, call_message_id):
     
     return render(request, 'message/edit_message.html', context={"form": form, 'is_update': True, 'message': message})
 
+@login_required 
+def view_report(request):
+    
+    
+    return render(request, 'report/view_report.html')
+
 
 @login_required 
 @staff_member_required
