@@ -34,6 +34,8 @@ import datetime
 import unicodedata
 import json
 import urllib
+import requests
+
    
 
 class UserList(APIView):
@@ -285,24 +287,35 @@ def call_message_detail(request, call_message_id):
 
 @login_required 
 def view_report(request):
+    reports = []
 
     # Twilio call
     account_sid = 'AC8bbf41596517948ed9b6ad40ac16ff45'
     auth_token = '34437a52ec6179fef5b40dc49b7303bb'
     client = Client(account_sid, auth_token)
 
-    calls = client.calls.list(limit=50)
-
     if request.user.is_superuser:
-        reports = CallLogDetail.objects.values("call_sid")
+        list_sid = CallLogDetail.objects.values("call_sid")
     else:
         user_id = request.user.id
-        print(user_id)
-        reports = CallLog.objects.filter(admin_id=user_id).values("call_sid")
-    print(reports)        
+        list_sid = CallLogDetail.objects.filter(call_log__admin_id=user_id).values('call_sid')
+    list_reports = [entry['call_sid'] for entry in list_sid]
+    for call_sid in list_reports:
+        c = client.calls(call_sid).fetch()
+        report = create_report(c.start_time,'content','audio',c.status)
+        reports.append(report)
     
-    return render(request, 'report/view_report.html')
+    return render(request, 'report/view_report.html', context={'calls': reports})
 
+def create_report(datetime,content,audio,call_status):
+    report = {}
+    report['date'] = datetime.strftime("%m/%d/%Y")
+    report['time'] = datetime.strftime("%H:%M:%S")
+    report['category'] = 'category'
+    report['content'] = content
+    report['audio'] = audio
+    report['call_status'] = call_status
+    return report
 
 @login_required 
 @staff_member_required

@@ -102,3 +102,5 @@ class CallLogDetail(models.Model):
     recipient = models.ForeignKey(Refugee, on_delete=models.CASCADE)
     call_sid = models.CharField(_("twilio call sid"), max_length=34, blank=False, null=False)
     call_log = models.ForeignKey(CallLog, on_delete=models.CASCADE)
+
+
