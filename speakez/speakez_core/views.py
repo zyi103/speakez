@@ -197,9 +197,10 @@ def call_recipients(request):
         recipients_id = request.POST.getlist('recipients[]')
         recipients = list(Refugee.objects.filter(pk__in=recipients_id).values())
 
-        # calling
+        # 
         sid_list = []
         for i in range(len(recipients)):
+            # calling maximum recipient limit
             if i < 5:
                 # xml url created by echo Twimlet
                 url = 'https://twimlets.com/echo?Twiml=' + twimlet_url
@@ -221,7 +222,7 @@ def call_recipients(request):
             else:
                 return HttpResponse(status=201)
 
-        calls = client.calls.list(limit=5)
+        calls = client.calls.list(limit=100)
         for record in calls:
             print(record.sid)
             print(record.status)
@@ -289,6 +290,7 @@ def call_message_detail(request, call_message_id):
 
 @login_required 
 def view_report(request):
+    user = request.user.username
     
     
     return render(request, 'report/view_report.html')
