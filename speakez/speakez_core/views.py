@@ -214,19 +214,14 @@ def call_recipients(request):
                 #logging
                 clog_detail = CallLogDetail(recipient=Refugee(**recipients[i]),call_log=clog, call_sid=call.sid)
                 clog_detail.save()
-                sid_list.append(call.sid)
-                print("[%s] is called by [%s] with [%s] at [%s]" % (clog_detail.recipient.first_name,
-                                                                    clog_detail.call_log.admin_username,
-                                                                    clog_detail.call_log.message_sent, 
-                                                                    clog_detail.call_log.date_time_created))
+                # sid_list.append(call.sid)
+                # print("[%s] is called by [%s] with [%s] at [%s]" % (clog_detail.recipient.first_name,
+                #                                                     clog_detail.call_log.admin_username,
+                #                                                     clog_detail.call_log.message_sent, 
+                #                                                     clog_detail.call_log.date_time_created))
             else:
                 return HttpResponse(status=201)
-
-        calls = client.calls.list(limit=100)
-        for record in calls:
-            print(record.sid)
-            print(record.status)
-
+                
         return HttpResponse(status=200)
 
 
@@ -290,8 +285,21 @@ def call_message_detail(request, call_message_id):
 
 @login_required 
 def view_report(request):
-    user = request.user.username
-    
+
+    # Twilio call
+    account_sid = 'AC8bbf41596517948ed9b6ad40ac16ff45'
+    auth_token = '34437a52ec6179fef5b40dc49b7303bb'
+    client = Client(account_sid, auth_token)
+
+    calls = client.calls.list(limit=50)
+
+    if request.user.is_superuser:
+        reports = CallLogDetail.objects.values("call_sid")
+    else:
+        user_id = request.user.id
+        print(user_id)
+        reports = CallLog.objects.filter(admin_id=user_id).values("call_sid")
+    print(reports)        
     
     return render(request, 'report/view_report.html')
 
