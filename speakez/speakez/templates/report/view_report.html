@@ -51,7 +51,9 @@
                 },
                 {  
                     mRender : function ( data, type, row ) { 
-                    return row.audio}
+                    return `<audio style="width:100%" controls id="${row.pk}" src='${row.audio}'>`
+                    },
+                    width: "45%",
                 },
                 {  
                     mRender : function ( data, type, row ) { 

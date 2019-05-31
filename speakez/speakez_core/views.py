@@ -34,7 +34,7 @@ import datetime
 import unicodedata
 import json
 import urllib
-import requests
+import uuid
 
    
 
@@ -295,25 +295,31 @@ def view_report(request):
     client = Client(account_sid, auth_token)
 
     if request.user.is_superuser:
-        list_sid = CallLogDetail.objects.values("call_sid")
+        list_sid = CallLogDetail.objects.values('call_sid','call_log')
     else:
         user_id = request.user.id
-        list_sid = CallLogDetail.objects.filter(call_log__admin_id=user_id).values('call_sid')
-    list_reports = [entry['call_sid'] for entry in list_sid]
+        list_sid = CallLogDetail.objects.filter(call_log__admin_id=user_id).values('call_sid','call_log')
+    list_reports = [entry for entry in list_sid]
     for call_sid in list_reports:
-        c = client.calls(call_sid).fetch()
-        report = create_report(c.start_time,'content','audio',c.status)
+        audio_url = get_audio_url(call_sid['call_log'])
+        c = client.calls(call_sid['call_sid']).fetch()
+        report = create_report(c.start_time,'content',audio_url,c.status)
         reports.append(report)
     
     return render(request, 'report/view_report.html', context={'calls': reports})
 
-def create_report(datetime,content,audio,call_status):
+def get_audio_url(call_log_id):
+    message = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
+    audio = CallMessage.objects.filter(pk=message).first().audio
+    return audio.url
+
+def create_report(datetime,content,audio_url,call_status):
     report = {}
     report['date'] = datetime.strftime("%m/%d/%Y")
     report['time'] = datetime.strftime("%H:%M:%S")
     report['category'] = 'category'
     report['content'] = content
-    report['audio'] = audio
+    report['audio'] = audio_url
     report['call_status'] = call_status
     return report
 
