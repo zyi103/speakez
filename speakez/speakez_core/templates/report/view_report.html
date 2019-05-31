@@ -22,6 +22,7 @@
             <th>Message Text</th>
             <th>Recording Preview</th>
             <th>Call Status</th>
+            <th>Success Rate</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -58,23 +59,34 @@
                 },
                 {  
                     mRender : function ( data, type, row ) { 
-                    return `<h4 class='strong'>${row.call_status}</h2>`}
+                    if (row.call_event_count < 1){
+                        status = `<h4 class='strong text-danger'>Failed</h2>`
+                    } else {
+                        status = `<h4 class='strong text-success'>Success</h2>`
+                    }
+                    return status}
                 },
                 {  
                     mRender : function ( data, type, row ) { 
-                    return `<button type="button" class="btn btn-primary" onclick="repeatCall('${row.recipient_id}','${row.message_id}','${row.audio}')">Repeat</button>`}
+                    return `<h4 class='strong'>${row.success_event_count}/${row.call_event_count}</h2>`}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return `<button type="button" class="btn btn-primary" onclick="repeatCall('${row.recipient_list}','${row.message_id}','${row.audio}')">Repeat</button>`}
                 },
             ],
             order: [[ 0, 'desc' ]],
         });
   });
 
-  function repeatCall(recipient_id,message_id,audio_url){
-      let recipients = [recipient_id]
+  function repeatCall(recipient_list,message_id,audio_url){
+      recipients = recipient_list.split(",")
       let message = {
                 pk: message_id,
                 audio_url: audio_url
             }
+      console.log(message)
+      console.log(recipient_list)
       $.ajax({
             type: "POST",
             url: '/admin/call_recipients/',
