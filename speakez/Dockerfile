@@ -15,4 +15,4 @@ COPY . /var/webapp
 EXPOSE 9000
 EXPOSE 9001
 
-CMD [ "uwsgi", "uwsgi.ini" ]
+CMD [ "uwsgi", "--ini", "uwsgi.ini" ]
