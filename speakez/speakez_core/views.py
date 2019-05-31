@@ -198,7 +198,7 @@ def call_recipients(request):
         # getting phone number 
         recipients_id = request.POST.getlist('recipients[]')
         recipients = list(Refugee.objects.filter(pk__in=recipients_id).values())
-        
+
         
         # calling maximum recipient limit
         if len(recipients) < 5:
@@ -308,11 +308,15 @@ def view_report(request):
         call_sid = call['call_sid']
 
         call_report = client.calls(call_sid).fetch()
-        audio_url = get_audio_url(call_log_id)
+        call_time = call_report.start_time
+        call_status = call_report.status
+        call_message = get_call_message(call_log_id)
+        audio_url = call_message.audio.url
+        content = call_message.content
         recipient_id = CallLogDetail.objects.filter(call_sid=call_sid).first().recipient_id
         message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
 
-        report = create_report(call_report.start_time,'content',audio_url,call_report.status,recipient_id,message_id)
+        report = create_report(call_time,content,audio_url,call_status,recipient_id,message_id)
         reports.append(report)
     
     return render(request, 'report/view_report.html', context={'calls': reports})
@@ -329,10 +333,10 @@ def create_report(datetime,content,audio_url,call_status,recipient_id,message_id
     report['message_id'] = str(message_id)
     return report
 
-def get_audio_url(call_log_id):
+def get_call_message(call_log_id):
     message = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
-    audio = CallMessage.objects.filter(pk=message).first().audio
-    return audio.url
+    call_message = CallMessage.objects.filter(pk=message).first()
+    return call_message
 
 @login_required 
 @staff_member_required
