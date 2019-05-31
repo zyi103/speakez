@@ -168,7 +168,6 @@ def select_message(request, recipients):
 @csrf_exempt
 def call_recipients(request):
     if request.method.lower() == "post":
-        print(request.POST)
         # Twilio call
         account_sid = 'AC8bbf41596517948ed9b6ad40ac16ff45'
         auth_token = '34437a52ec6179fef5b40dc49b7303bb'
