@@ -74,7 +74,6 @@
     function call() {
         console.log(`recipients: ${recipients}`)
         console.log(`message pk: ${message.pk}`)
-        console.log(`audio url: ${message.audio_url}`)
         $.ajax({
             type: "POST",
             url: '/admin/call_recipients/',

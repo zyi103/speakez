@@ -168,7 +168,7 @@ def select_message(request, recipients):
 @csrf_exempt
 def call_recipients(request):
     if request.method.lower() == "post":
-        
+        print(request.POST)
         # Twilio call
         account_sid = 'AC8bbf41596517948ed9b6ad40ac16ff45'
         auth_token = '34437a52ec6179fef5b40dc49b7303bb'
@@ -198,19 +198,21 @@ def call_recipients(request):
         # getting phone number 
         recipients_id = request.POST.getlist('recipients[]')
         recipients = list(Refugee.objects.filter(pk__in=recipients_id).values())
-
-        # 
-        sid_list = []
-        for i in range(len(recipients)):
-            # calling maximum recipient limit
-            if i < 5:
+        
+        
+        # calling maximum recipient limit
+        if len(recipients) < 5:
+            sid_list = []
+            for i in range(len(recipients)):
                 # xml url created by echo Twimlet
                 url = 'https://twimlets.com/echo?Twiml=' + twimlet_url
                 phone_num = '+1' + recipients[i].get('phone_number')
+                host_num = '+16414549805'
+
                 call = client.calls.create(
                                     url= url,
                                     to= phone_num,
-                                    from_='+16414549805'
+                                    from_= host_num
                                 )
 
                 #logging
@@ -221,8 +223,8 @@ def call_recipients(request):
                 #                                                     clog_detail.call_log.admin_username,
                 #                                                     clog_detail.call_log.message_sent, 
                 #                                                     clog_detail.call_log.date_time_created))
-            else:
-                return HttpResponse(status=201)
+        else:
+            return HttpResponse(status=201)
                 
         return HttpResponse(status=200)
 
@@ -286,6 +288,7 @@ def call_message_detail(request, call_message_id):
     return render(request, 'message/edit_message.html', context={"form": form, 'is_update': True, 'message': message})
 
 @login_required 
+@csrf_exempt
 def view_report(request):
     reports = []
 
@@ -300,20 +303,21 @@ def view_report(request):
         user_id = request.user.id
         list_sid = CallLogDetail.objects.filter(call_log__admin_id=user_id).values('call_sid','call_log')
     list_reports = [entry for entry in list_sid]
-    for call_sid in list_reports:
-        audio_url = get_audio_url(call_sid['call_log'])
-        c = client.calls(call_sid['call_sid']).fetch()
-        report = create_report(c.start_time,'content',audio_url,c.status)
+    for call in list_reports:
+        call_log_id = call['call_log']
+        call_sid = call['call_sid']
+
+        call_report = client.calls(call_sid).fetch()
+        audio_url = get_audio_url(call_log_id)
+        recipient_id = CallLogDetail.objects.filter(call_sid=call_sid).first().recipient_id
+        message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
+
+        report = create_report(call_report.start_time,'content',audio_url,call_report.status,recipient_id,message_id)
         reports.append(report)
     
     return render(request, 'report/view_report.html', context={'calls': reports})
 
-def get_audio_url(call_log_id):
-    message = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
-    audio = CallMessage.objects.filter(pk=message).first().audio
-    return audio.url
-
-def create_report(datetime,content,audio_url,call_status):
+def create_report(datetime,content,audio_url,call_status,recipient_id,message_id):
     report = {}
     report['date'] = datetime.strftime("%m/%d/%Y")
     report['time'] = datetime.strftime("%H:%M:%S")
@@ -321,7 +325,14 @@ def create_report(datetime,content,audio_url,call_status):
     report['content'] = content
     report['audio'] = audio_url
     report['call_status'] = call_status
+    report['recipient_id'] = str(recipient_id)
+    report['message_id'] = str(message_id)
     return report
+
+def get_audio_url(call_log_id):
+    message = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
+    audio = CallMessage.objects.filter(pk=message).first().audio
+    return audio.url
 
 @login_required 
 @staff_member_required

@@ -22,6 +22,7 @@
             <th>Message Text</th>
             <th>Recording Preview</th>
             <th>Call Status</th>
+            <th>Action</th>
         </tr>
     </thead>
 </table>
@@ -57,11 +58,38 @@
                 },
                 {  
                     mRender : function ( data, type, row ) { 
-                    return row.call_status}
+                    return `<h4 class='strong'>${row.call_status}</h2>`}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return `<button type="button" class="btn btn-primary" onclick="repeatCall('${row.recipient_id}','${row.message_id}','${row.audio}')">Repeat</button>`}
                 },
             ],
-            order: [[ 1, 'asc' ]],
+            order: [[ 0, 'desc' ]],
         });
   });
+
+  function repeatCall(recipient_id,message_id,audio_url){
+      let recipients = [recipient_id]
+      let message = {
+                pk: message_id,
+                audio_url: audio_url
+            }
+      $.ajax({
+            type: "POST",
+            url: '/admin/call_recipients/',
+            data: {
+                'recipients': recipients,
+                'message': message,
+            },
+            success: function(data) {
+                console.log("sent")
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                console.log(thrownError)
+            },
+        });
+  }
 </script>
 {% endblock %}
