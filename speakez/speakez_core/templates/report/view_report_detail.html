@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load fontawesome %}
+{% load static %}
+
+{% block title %}Audio Messages{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="row text-center bg-secondary">
+    <div class="col-sm-12">
+        <div class="login-title">
+            <h2 class="text-white">View Report Detail</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-4">
+        <div class="card border-dark mb-3">
+            <div class="card-header">Message</div>
+            <div class="card-body">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <audio controls src="{{ message.audio.url }}" type="audio/wav" id="audio"></audio>
+                        </tr>
+                        <tr>
+                            <td scope="row">Date and Time Created</td>
+                            <td>{{message.date_time_created}}</td>
+                        </tr>
+                        <tr>
+                            <td scope="row">Duration</td>
+                            <td>{{message.duration|floatformat:2 }} seconds</td>
+                        </tr>
+                        <tr>
+                            <td scope="row">Content</td>
+                            <td>{{message.content}}</td>
+                        </tr>
+                        <tr>
+                            <td scope="row">Category/Categories</td>
+                            <td>{% for category in message.category.all %}
+                                    {{ category.title }}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <table >
+    </div>
+    </div>
+    <div class="col-sm-6">
+        <table id="recipient" class="table table-striped table-bordered display" width="100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+</table>
+    </div>
+</div>
+<script type="application/javascript">
+    let recipients = {{recipients | safe}}
+    console.log(recipient)
+
+    $(document).ready(function () {
+        let table = $('#recipient').DataTable({
+            data: recipients,
+            columns: [
+                {
+                    mRender : function ( data, type, row ) { 
+                    return `${row.fields.first_name}, ${row.fields.last_name}`}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return row.fields.phone_number}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return `${row.fields.street_number}<br>${row.fields.street_name}, ${row.fields.city}, ${row.fields.zip_code}`}
+                },
+            ],
+            order: [[ 1, 'asc' ]],
+        });
+        $('#recipient tbody').on( 'click', 'td', function () {
+            let idx = table.cell(this).index().row;
+            var id = table.row( idx ).data().pk
+            window.location.href = `/admin/edit_recipients/${id}/`;
+        });
+    })
+</script>
+{% endblock content %}

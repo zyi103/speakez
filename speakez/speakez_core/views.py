@@ -34,6 +34,8 @@ import datetime
 import unicodedata
 import json
 import urllib
+import uuid
+
    
 
 class UserList(APIView):
@@ -166,7 +168,6 @@ def select_message(request, recipients):
 @csrf_exempt
 def call_recipients(request):
     if request.method.lower() == "post":
-        
         # Twilio call
         account_sid = 'AC8bbf41596517948ed9b6ad40ac16ff45'
         auth_token = '34437a52ec6179fef5b40dc49b7303bb'
@@ -195,37 +196,36 @@ def call_recipients(request):
 
         # getting phone number 
         recipients_id = request.POST.getlist('recipients[]')
+        print(recipients_id)
         recipients = list(Refugee.objects.filter(pk__in=recipients_id).values())
 
-        # calling
-        sid_list = []
-        for i in range(len(recipients)):
-            if i < 5:
+        
+        # calling maximum recipient limit
+        if len(recipients) < 5:
+            sid_list = []
+            for i in range(len(recipients)):
                 # xml url created by echo Twimlet
                 url = 'https://twimlets.com/echo?Twiml=' + twimlet_url
                 phone_num = '+1' + recipients[i].get('phone_number')
+                host_num = '+16414549805'
+
                 call = client.calls.create(
                                     url= url,
                                     to= phone_num,
-                                    from_='+16414549805'
+                                    from_= host_num
                                 )
 
                 #logging
                 clog_detail = CallLogDetail(recipient=Refugee(**recipients[i]),call_log=clog, call_sid=call.sid)
                 clog_detail.save()
-                sid_list.append(call.sid)
-                print("[%s] is called by [%s] with [%s] at [%s]" % (clog_detail.recipient.first_name,
-                                                                    clog_detail.call_log.admin_username,
-                                                                    clog_detail.call_log.message_sent, 
-                                                                    clog_detail.call_log.date_time_created))
-            else:
-                return HttpResponse(status=201)
-
-        calls = client.calls.list(limit=5)
-        for record in calls:
-            print(record.sid)
-            print(record.status)
-
+                # sid_list.append(call.sid)
+                # print("[%s] is called by [%s] with [%s] at [%s]" % (clog_detail.recipient.first_name,
+                #                                                     clog_detail.call_log.admin_username,
+                #                                                     clog_detail.call_log.message_sent, 
+                #                                                     clog_detail.call_log.date_time_created))
+        else:
+            return HttpResponse(status=201)
+                
         return HttpResponse(status=200)
 
 
@@ -287,6 +287,86 @@ def call_message_detail(request, call_message_id):
     
     return render(request, 'message/edit_message.html', context={"form": form, 'is_update': True, 'message': message})
 
+@login_required 
+@csrf_exempt
+def view_report(request):
+    reports = []
+
+    if request.user.is_superuser:
+        call_list = CallLog.objects.all().values()
+    else:
+        user_id = request.user.id
+        call_list = CallLog.objects.filter(admin_id=user_id).values()
+    calls = [entry for entry in call_list]
+    for call in calls:
+        call_log_id = call['id']
+        call_time = call['date_time_created']
+        call_message = get_call_message(call['message_sent_id'])
+        audio_url = call_message.audio.url
+        content = call_message.content
+        call_event_count = get_call_count(call_log_id)
+        success_event_count = get_success_count(call_log_id)
+        recipient_list = get_recipient_list(call_log_id)
+        message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
+
+        report = create_report(call_log_id,call_time,content,audio_url,call_event_count,success_event_count,recipient_list,message_id)
+        reports.append(report)
+    
+    return render(request, 'report/view_report.html', context={'calls': reports})
+
+def get_success_count(call_log_id):
+    # Twilio call
+    account_sid = 'AC8bbf41596517948ed9b6ad40ac16ff45'
+    auth_token = '34437a52ec6179fef5b40dc49b7303bb'
+    client = Client(account_sid, auth_token)
+
+    success_count = 0
+    call_log_details = CallLogDetail.objects.filter(call_log_id=call_log_id)
+    if (len(call_log_details) > 0):
+        for call_event in call_log_details:
+            call_status = client.calls(call_event.call_sid).fetch().status
+            if (call_status == "completed"):
+                success_count += 1
+    return success_count
+
+def get_call_count(call_log_id):
+    call_log_details = CallLogDetail.objects.filter(call_log_id=call_log_id)
+    return len(call_log_details)
+
+def get_recipient_list(call_log_id):
+    recipient_list = []
+    call_log_details = CallLogDetail.objects.filter(call_log_id=call_log_id).values()
+    for call_event in call_log_details:
+        recipient_list.append(str(call_event['recipient_id']))
+    return recipient_list
+
+def create_report(call_log_id, datetime, content, audio_url, call_event_count, success_event_count, recipient_list, message_id):
+    report = {}
+    report['call_log_id'] = str(call_log_id)
+    report['date'] = datetime.strftime("%m/%d/%Y")
+    report['time'] = datetime.strftime("%H:%M:%S")
+    report['category'] = 'category'
+    report['content'] = content
+    report['audio'] = audio_url
+    report['call_event_count'] = call_event_count
+    report['success_event_count'] = success_event_count
+    report['recipient_list'] = recipient_list
+    report['message_id'] = str(message_id)
+    return report
+
+def get_call_message(message_sent_id):
+    call_message = CallMessage.objects.filter(pk=message_sent_id).first()
+    return call_message
+
+@login_required
+def view_report_detail(request, call_log_id):
+    message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
+    message = CallMessage.objects.filter(pk=message_id).first()
+    recipients = []
+    recipient_list = get_recipient_list(call_log_id)
+    recipients = Refugee.objects.filter(pk__in=recipient_list)
+    recipients = serializers.serialize('json',recipients)
+    return render(request, 'report/view_report_detail.html', context={"message" : message, "recipients": recipients})
 
 @login_required 
 @staff_member_required

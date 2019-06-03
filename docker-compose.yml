@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+    nginx:
+        container_name: nginx-container
+        build: ./nginx
+        restart: always
+        ports:
+            - 8000:80
+        depends_on:
+            - speakez
+        links:
+            - speakez
+
+    speakez:
+        container_name: speakez-core-container
+        build: ./speakez
+        restart: always
+ 

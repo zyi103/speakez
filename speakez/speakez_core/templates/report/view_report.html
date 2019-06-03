@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load static %}
+{% load fontawesome %}
+
+{% block title %}report{% endblock %}
+
+{% block content %}
+<div class="row text-center bg-secondary">
+  <div class="col-sm-12">
+    <div class="login-title">
+      <h2 class="text-white">View Reports</h2>
+    </div>
+  </div>
+</div>
+<table id="report" class="table table-striped table-bordered display" width="100%">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Category</th>
+            <th>Message Text</th>
+            <th>Recording Preview</th>
+            <th>Call Status</th>
+            <th>Success Rate</th>
+            <th>Message Details</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+</table>
+<script type="application/javascript">
+  let calls = {{calls | safe}}
+  console.log(calls)
+
+  $(document).ready(function () {
+        let table = $('#report').DataTable({
+            data: calls,
+            columns: [
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return row.date}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return row.time}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return row.category}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return row.content}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return `<audio style="width:100%" controls id="${row.pk}" src='${row.audio}'>`
+                    },
+                    width: "45%",
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    if (row.call_event_count < 1){
+                        status = `<h4 class='strong text-danger'>Failed</h2>`
+                    } else {
+                        status = `<h4 class='strong text-success'>Success</h2>`
+                    }
+                    return status}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return `<h4 class='strong'>${row.success_event_count}/${row.call_event_count}</h2>`}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return `<button type="button" class="btn btn-primary" onclick="viewCallDetail('${row.call_log_id}')">View</button>`}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return `<button type="button" class="btn btn-primary" onclick="repeatCall('${row.recipient_list}','${row.message_id}','${row.audio}')">Repeat</button>`}
+                },
+            ],
+            order: [[ 0, 'desc' ]],
+        });
+  });
+
+  function viewCallDetail(call_log_id){
+      window.location.href = `/admin/view_report/${call_log_id}`
+  }
+
+  function repeatCall(recipient_list,message_id,audio_url){
+      recipients = recipient_list.split(",")
+      let message = {
+                pk: message_id,
+                audio_url: audio_url
+            }
+      console.log(message)
+      console.log(recipient_list)
+      $.ajax({
+            type: "POST",
+            url: '/admin/call_recipients/',
+            data: {
+                'recipients': recipients,
+                'message': message,
+            },
+            success: function(data) {
+                window.location.href = '/admin/view_report';
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                console.log(thrownError)
+            },
+        });
+  }
+</script>
+{% endblock %}

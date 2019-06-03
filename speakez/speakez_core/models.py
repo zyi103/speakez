@@ -91,8 +91,7 @@ class CallLog(models.Model):
     date_time_created = models.DateTimeField(_("Date and Time Created"), default=timezone.now)
     message_sent = models.ForeignKey(CallMessage, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.id
+ 
 
 class CallLogDetail(models.Model):
     class Meta:
@@ -104,5 +103,4 @@ class CallLogDetail(models.Model):
     call_sid = models.CharField(_("twilio call sid"), max_length=34, blank=False, null=False)
     call_log = models.ForeignKey(CallLog, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.id
+
