@@ -15,7 +15,11 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-TWILLIO_KEY = os.environ.get("TWILLIO_KEY", None)
+APP_ENV=os.environ.get("APP_ENV", "testing")
+TWILLIO_KEY = os.environ.get("TWILLIO_KEY", "AC8bbf41596517948ed9b6ad40ac16ff45")
+TWILLIO_TOKEN = os.environ.get("TWILLIO_TOKEN", "34437a52ec6179fef5b40dc49b7303bb")
+
+
 
 
 # Quick-start development settings - unsuitable for production
