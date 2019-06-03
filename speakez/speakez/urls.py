@@ -32,14 +32,15 @@ urlpatterns = [
     path('admin/view_users/<str:username>/delete_user/', views.DeleteUser.as_view(), name='delete_user'),
     path('admin/', views.dashboard, name='dashboard'),
     path('admin/edit_recipients/', views.edit_recipients, name='edit_recipient'),
-    path('admin/edit_recipients/<str:recipient_id>/', views.recipients_detail, name='recipient_detail'),
+    path('admin/edit_recipients/<uuid:recipient_id>/', views.recipients_detail, name='recipient_detail'),
     path('admin/view_recipients/', views.list_recipients, name='recipient_list'),
     path('admin/select_recipients/', views.select_recipients, name='select_recipients'),
     path('admin/select_recipients/select_message/<recipients>/', views.select_message, name='select_message'),
     path('admin/call_recipients/', views.call_recipients, name='call_recipients'),
     path('admin/view_report/', views.view_report, name='view_report'),
+    path('admin/view_report/<uuid:call_log_id>/', views.view_report_detail, name='view_report_detail'),
     path('admin/add_messages/', views.add_message, name='add_message'),
-    path('admin/view_messages/<str:call_message_id>/', views.call_message_detail, name='update_message_detail'),
+    path('admin/view_messages/<uuid:call_message_id>/', views.call_message_detail, name='update_message_detail'),
     path('admin/view_messages/', views.list_call_messages, name='message_list'),
     # url(r'^', RedirectView.as_view(url='/accounts/login/'))
     # this redirect will not allow websever to serve message from media file.

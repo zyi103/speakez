@@ -299,16 +299,17 @@ def view_report(request):
         call_list = CallLog.objects.filter(admin_id=user_id).values()
     calls = [entry for entry in call_list]
     for call in calls:
+        call_log_id = call['id']
         call_time = call['date_time_created']
         call_message = get_call_message(call['message_sent_id'])
         audio_url = call_message.audio.url
         content = call_message.content
-        call_event_count = get_call_count(call['id'])
-        success_event_count = get_success_count(call['id'])
-        recipient_list = get_recipient_list(call['id'])
-        message_id = CallLog.objects.filter(pk=call['id']).first().message_sent_id
+        call_event_count = get_call_count(call_log_id)
+        success_event_count = get_success_count(call_log_id)
+        recipient_list = get_recipient_list(call_log_id)
+        message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
 
-        report = create_report(call_time,content,audio_url,call_event_count,success_event_count,recipient_list,message_id)
+        report = create_report(call_log_id,call_time,content,audio_url,call_event_count,success_event_count,recipient_list,message_id)
         reports.append(report)
     
     return render(request, 'report/view_report.html', context={'calls': reports})
@@ -324,7 +325,6 @@ def get_success_count(call_log_id):
     if (len(call_log_details) > 0):
         for call_event in call_log_details:
             call_status = client.calls(call_event.call_sid).fetch().status
-            print(call_status)
             if (call_status == "completed"):
                 success_count += 1
     return success_count
@@ -340,8 +340,9 @@ def get_recipient_list(call_log_id):
         recipient_list.append(str(call_event['recipient_id']))
     return recipient_list
 
-def create_report(datetime,content,audio_url,call_event_count,success_event_count,recipient_list,message_id):
+def create_report(call_log_id, datetime, content, audio_url, call_event_count, success_event_count, recipient_list, message_id):
     report = {}
+    report['call_log_id'] = str(call_log_id)
     report['date'] = datetime.strftime("%m/%d/%Y")
     report['time'] = datetime.strftime("%H:%M:%S")
     report['category'] = 'category'
@@ -356,6 +357,16 @@ def create_report(datetime,content,audio_url,call_event_count,success_event_coun
 def get_call_message(message_sent_id):
     call_message = CallMessage.objects.filter(pk=message_sent_id).first()
     return call_message
+
+@login_required
+def view_report_detail(request, call_log_id):
+    message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
+    message = CallMessage.objects.filter(pk=message_id).first()
+    recipients = []
+    recipient_list = get_recipient_list(call_log_id)
+    recipients = Refugee.objects.filter(pk__in=recipient_list)
+    recipients = serializers.serialize('json',recipients)
+    return render(request, 'report/view_report_detail.html', context={"message" : message, "recipients": recipients})
 
 @login_required 
 @staff_member_required

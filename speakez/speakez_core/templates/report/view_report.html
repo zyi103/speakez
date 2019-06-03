@@ -23,6 +23,7 @@
             <th>Recording Preview</th>
             <th>Call Status</th>
             <th>Success Rate</th>
+            <th>Message Details</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -72,12 +73,20 @@
                 },
                 {  
                     mRender : function ( data, type, row ) { 
+                    return `<button type="button" class="btn btn-primary" onclick="viewCallDetail('${row.call_log_id}')">View</button>`}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
                     return `<button type="button" class="btn btn-primary" onclick="repeatCall('${row.recipient_list}','${row.message_id}','${row.audio}')">Repeat</button>`}
                 },
             ],
             order: [[ 0, 'desc' ]],
         });
   });
+
+  function viewCallDetail(call_log_id){
+      window.location.href = `/admin/view_report/${call_log_id}`
+  }
 
   function repeatCall(recipient_list,message_id,audio_url){
       recipients = recipient_list.split(",")
