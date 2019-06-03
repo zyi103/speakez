@@ -1,19 +1,21 @@
 version: '3'
 
 services:
-    nginx:
-        container_name: nginx-container
-        build: ./nginx
-        restart: always
-        ports:
-            - 8000:80
-        depends_on:
-            - speakez
-        links:
-            - speakez
+    # nginx:
+    #     container_name: nginx-container
+    #     build: ./nginx
+    #     restart: always
+    #     ports:
+    #         - 8000:80
+    #     depends_on:
+    #         - speakez
+    #     links:
+    #         - speakez
 
     speakez:
-        container_name: speakez-core-container
+        image: registry.ischool.syr.edu:5000/ndlyga/speakez:dev
         build: ./speakez
         restart: always
+        ports:
+            - 9080:9000
  
