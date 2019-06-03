@@ -24,7 +24,7 @@
                 <table class="table">
                     <tbody>
                         <tr>
-                            <audio controls src="{{ message.audio.url }}" type="audio/wav" id="audio"></audio>
+                            <audio style="width:100%" controls src="{{ message.audio.url }}" type="audio/wav" id="audio"></audio>
                         </tr>
                         <tr>
                             <td scope="row">Date and Time Created</td>
@@ -39,7 +39,7 @@
                             <td>{{message.content}}</td>
                         </tr>
                         <tr>
-                            <td scope="row">Category/Categories</td>
+                            <td scope="row">Category</td>
                             <td>{% for category in message.category.all %}
                                     {{ category.title }}
                                 {% endfor %}
@@ -68,7 +68,7 @@
 </div>
 <script type="application/javascript">
     let recipients = {{recipients | safe}}
-    console.log(recipient)
+    console.log(recipients)
 
     $(document).ready(function () {
         let table = $('#recipient').DataTable({

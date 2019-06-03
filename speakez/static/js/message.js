@@ -16,6 +16,7 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia 
 
 let onFail = function (e) {
     alert('Error ' + e);
+    console.log(e)
     console.log('Rejected!', e);
 };
 
