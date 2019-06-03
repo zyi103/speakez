@@ -12,6 +12,7 @@ RUN pip install uwsgi
 
 COPY . /var/webapp
 
+
 EXPOSE 9000
 EXPOSE 9001
 
