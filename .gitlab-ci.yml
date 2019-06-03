@@ -1,0 +1,62 @@
+# Official docker image.
+image: docker:latest
+
+variables:
+  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_DRIVER: overlay2
+
+stages:
+  - build
+  - deploy
+
+services:
+  - docker:dind
+
+build:
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASS registry.ischool.syr.edu:5000
+    - docker build --pull -t "registry.ischool.syr.edu:5000/ndlyga/$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" .
+    - docker push "registry.ischool.syr.edu:5000/ndlyga/$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+
+# test:
+#   stage: test
+#   services:
+#     - docker:dind
+#   variables:
+#     DOCKER_HOST: tcp://localhost:2375
+#     DOCKER_DRIVER: overlay2
+#   script:
+#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASS registry.ischool.syr.edu:5000
+#     - docker run --name=postgres -d
+#       -e POSTGRES_DB=testdb
+#       -e POSTGRES_USER=ischooldevdbuser
+#       -e POSTGRES_PASSWORD="ischooldev"
+#       postgres
+
+#     - docker run --name=testcontainer --link postgres 
+#       -e APP_ENV=testing
+#       -e APP_ENV_LOCAL=local
+#       -e DATABASE_DB=testdb
+#       -e DATABASE_ENGINE=django.db.backends.postgresql_psycopg2
+#       -e DATABASE_HOST=postgres
+#       -e DATABASE_PASSWORD=ischooldev
+#       -e DATABASE_PORT=5432
+#       -e DATABASE_USER=ischooldevdbuser
+#       -e IDENTITY_SERVER_CLIENT_ID=$CI_CLIENT_ID
+#       -e IDENTITY_SERVER_CLIENT_SECRET=$CI_CLIENT_SECRET
+#       -e STATIC_URL="/static/" "registry.ischool.syr.edu:5000/ndlyga/$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" python /var/webapp/runtests.py
+#   except:
+#     - master
+
+
+deploy:
+  stage: deploy
+  services:
+    - docker:dind
+  script:
+    - echo $RANCHER_CI_CONFIG > cli2.json
+    - docker run --rm -it -v cli2.json:/root/.rancher/cli2.json rancher/cli kubectl patch deployment speakez 
+      -p '{"spec":{"template":{"metadata":{ "labels":{ "redeploy":"$(date +%s)-$CI_COMMIT_REF_SLUG"}}}}}'
+  only:
+    - staging
