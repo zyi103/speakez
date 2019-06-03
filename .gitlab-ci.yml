@@ -16,7 +16,7 @@ build:
   stage: build
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASS registry.ischool.syr.edu:5000
-    - docker build --pull -t "registry.ischool.syr.edu:5000/ndlyga/$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" .
+    - docker build --pull -t "registry.ischool.syr.edu:5000/ndlyga/$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" ./speakez
     - docker push "registry.ischool.syr.edu:5000/ndlyga/$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
 
 # test:
