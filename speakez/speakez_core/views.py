@@ -169,8 +169,8 @@ def select_message(request, recipients):
 def call_recipients(request):
     if request.method.lower() == "post":
         # Twilio call
-        account_sid = 'AC8bbf41596517948ed9b6ad40ac16ff45'
-        auth_token = '34437a52ec6179fef5b40dc49b7303bb'
+        account_sid = settings.TWILLIO_KEY
+        auth_token = settings.TWILLIO_TOKEN
         client = Client(account_sid, auth_token)
 
         # logging
@@ -316,8 +316,8 @@ def view_report(request):
 
 def get_success_count(call_log_id):
     # Twilio call
-    account_sid = 'AC8bbf41596517948ed9b6ad40ac16ff45'
-    auth_token = '34437a52ec6179fef5b40dc49b7303bb'
+    account_sid = settings.TWILLIO_KEY
+    auth_token = settings.TWILLIO_TOKEN
     client = Client(account_sid, auth_token)
 
     success_count = 0

@@ -15,7 +15,16 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-TWILLIO_KEY = os.environ.get("TWILLIO_KEY", None)
+APP_ENV=os.environ.get("APP_ENV", "testing")
+APP_HOST=os.environ.get("APP_HOST", "localhost")
+TWILLIO_KEY = os.environ.get("TWILLIO_KEY", "AC8bbf41596517948ed9b6ad40ac16ff45")
+TWILLIO_TOKEN = os.environ.get("TWILLIO_TOKEN", "34437a52ec6179fef5b40dc49b7303bb")
+DATABASE_DB=os.environ.get("DATABASE_DB", os.path.join(BASE_DIR, 'db.sqlite3'))
+DATABASE_HOST=os.environ.get("DATABASE_HOST", "")
+DATABASE_USER=os.environ.get("DATABASE_USER", "")
+DATABASE_PASSWORD=os.environ.get("DATABASE_PASSWORD", "")
+DATABASE_ENGINE=os.environ.get("DATABASE_ENGINE", "django.db.backends.sqlite3")
+DATABASE_PORT=os.environ.get("DATABASE_PORT", "")
 
 
 # Quick-start development settings - unsuitable for production
@@ -97,12 +106,12 @@ WSGI_APPLICATION = 'speakez.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'TEST': {
-          # this gets you in-memory sqlite for tests, which is fast
-          'ENGINE': 'django.db.backends.sqlite3',
-        }
+        'ENGINE': DATABASE_ENGINE,
+        'NAME': DATABASE_DB,
+        'HOST': DATABASE_HOST,
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
+        'PORT': DATABASE_PORT
     }
 }
 
