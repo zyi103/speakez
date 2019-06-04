@@ -57,7 +57,8 @@ deploy:
   script:
     - echo $RANCHER_CI_CONFIG > cli2.json
     - cat cli2.json
-    - docker run --rm -v cli2.json:/root/.rancher/cli2.json rancher/cli kubectl patch deployment speakez 
-      -p "{\"spec\":{\"template\":{\"metadata\":{ \"labels\":{  \"redeploy\":\"test\"}}}}}"
+    # - docker run --rm -v cli2.json:/root/.rancher/cli2.json rancher/cli kubectl patch deployment speakez 
+    #   -p "{\"spec\":{\"template\":{\"metadata\":{ \"labels\":{  \"redeploy\":\"test\"}}}}}"
+    - docker run --rm -v cli2.json:/root/.rancher/cli2.json rancher/cli kubectl get deployment --all-namespaces
   only:
     - staging
