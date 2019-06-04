@@ -56,7 +56,7 @@ deploy:
     - docker:dind
   script:
     - echo $RANCHER_CI_CONFIG > cli2.json
-    - docker run --rm -it -v cli2.json:/root/.rancher/cli2.json rancher/cli kubectl patch deployment speakez 
+    - docker run --rm -v cli2.json:/root/.rancher/cli2.json rancher/cli kubectl patch deployment speakez 
       -p '{"spec":{"template":{"metadata":{ "labels":{ "redeploy":"$(date +%s)-$CI_COMMIT_REF_SLUG"}}}}}'
   only:
     - staging
