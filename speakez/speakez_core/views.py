@@ -35,6 +35,7 @@ import unicodedata
 import json
 import urllib
 import uuid
+from itertools import chain
 
    
 
@@ -360,13 +361,34 @@ def get_call_message(message_sent_id):
 
 @login_required
 def view_report_detail(request, call_log_id):
+    # Twilio call
+    account_sid = settings.TWILLIO_KEY
+    auth_token = settings.TWILLIO_TOKEN
+    client = Client(account_sid, auth_token)
+
     message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
     message = CallMessage.objects.filter(pk=message_id).first()
+
     recipients = []
-    recipient_list = get_recipient_list(call_log_id)
-    recipients = Refugee.objects.filter(pk__in=recipient_list)
-    recipients = serializers.serialize('json',recipients)
+    call_details = list(CallLogDetail.objects.filter(call_log_id=call_log_id).values())
+    for i in range(len(call_details)):
+        recipient = Refugee.objects.filter(pk=call_details[i]['recipient_id']).values().first()
+        twilio_report = client.calls(call_details[i]['call_sid']).fetch()
+        recipients.append(create_report_detail(recipient, twilio_report))
+    recipients = json.dumps(recipients)
     return render(request, 'report/view_report_detail.html', context={"message" : message, "recipients": recipients})
+
+def create_report_detail (recipient, twilio):
+    report_detail = {}
+    report_detail['id'] = str(recipient['id'])
+    report_detail['first_name'] = recipient['first_name']
+    report_detail['middle_name'] = recipient['middle_name']
+    report_detail['last_name'] = recipient['last_name']
+    report_detail['phone_number'] = recipient['phone_number']
+    
+    report_detail['duration'] = twilio.duration
+    report_detail['status'] = twilio.status
+    return report_detail
 
 @login_required 
 @staff_member_required

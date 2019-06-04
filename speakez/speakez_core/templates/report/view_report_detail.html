@@ -60,38 +60,41 @@
             <tr>
                 <th>Name</th>
                 <th>Contact</th>
-                <th>Address</th>
+                <th>Duration</th>
+                <th>Status</th>
             </tr>
         </thead>
 </table>
     </div>
 </div>
 <script type="application/javascript">
-    let recipients = {{recipients | safe}}
-    console.log(recipients)
 
     $(document).ready(function () {
         let table = $('#recipient').DataTable({
-            data: recipients,
+            data: {{recipients | safe}},
             columns: [
                 {
                     mRender : function ( data, type, row ) { 
-                    return `${row.fields.first_name}, ${row.fields.last_name}`}
+                    return `${row.first_name}, ${row.last_name}`}
                 },
                 {  
                     mRender : function ( data, type, row ) { 
-                    return row.fields.phone_number}
+                    return row.phone_number}
                 },
                 {  
                     mRender : function ( data, type, row ) { 
-                    return `${row.fields.street_number}<br>${row.fields.street_name}, ${row.fields.city}, ${row.fields.zip_code}`}
+                    return row.duration}
+                },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return row.status}
                 },
             ],
             order: [[ 1, 'asc' ]],
         });
         $('#recipient tbody').on( 'click', 'td', function () {
             let idx = table.cell(this).index().row;
-            var id = table.row( idx ).data().pk
+            var id = table.row( idx ).data().id
             window.location.href = `/admin/edit_recipients/${id}/`;
         });
     })
