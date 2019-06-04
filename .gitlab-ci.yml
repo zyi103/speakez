@@ -58,6 +58,6 @@ deploy:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASS registry.ischool.syr.edu:5000
     - echo $RANCHER_CI_CONFIG > cli2.json
     - docker run -v $$(pwd)/cli2.json:/root/.rancher/cli2.json:ro registry.ischool.syr.edu:5000/ndlyga/rancher-cli:latest kubectl patch deployment speakez 
-      -p "{\"spec\":{\"template\":{\"metadata\":{ \"labels\":{  \"redeploy\":\"$$(date +%s)-$CI_COMMIT_REF_SLUG\"}}}}}"
+      -p "{\"spec\":{\"template\":{\"metadata\":{ \"labels\":{  \"redeploy\":\"$CI_COMMIT_REF_SLUG\"}}}}}"
   only:
     - staging
