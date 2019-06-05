@@ -58,7 +58,8 @@ deploy:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASS registry.ischool.syr.edu:5000
     - echo $RANCHER_CI_CONFIG > cli2.json
     - export BUILD_HOME=`pwd`
-    - docker run -v $BUILD_HOME/cli2.json:/root/.rancher/cli2.json:ro registry.ischool.syr.edu:5000/ndlyga/rancher-cli:latest kubectl patch deployment speakez 
+    - export BUILD_TIME
+    - docker run -v $BUILD_HOME/cli2.json:/root/.rancher/cli2.json:ro registry.ischool.syr.edu:5000/ndlyga/rancher-cli:latest kubectl patch deployment speakez --namespace=ischool-sites 
       -p "{\"spec\":{\"template\":{\"metadata\":{ \"labels\":{  \"redeploy\":\"$CI_COMMIT_REF_SLUG\"}}}}}"
   only:
     - staging
