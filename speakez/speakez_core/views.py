@@ -211,6 +211,7 @@ def call_recipients(request):
                 host_num = '+16414549805'
 
                 call = client.calls.create(
+                                    machine_detection='Enable',
                                     url= url,
                                     to= phone_num,
                                     from_= host_num
