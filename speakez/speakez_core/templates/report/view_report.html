@@ -88,11 +88,10 @@
       window.location.href = `/admin/view_report/${call_log_id}`
   }
 
-  function repeatCall(recipient_list,message_id,audio_url){
+  function repeatCall(recipient_list,message_id){
       recipients = recipient_list.split(",")
       let message = {
                 pk: message_id,
-                audio_url: audio_url
             }
       console.log(message)
       console.log(recipient_list)

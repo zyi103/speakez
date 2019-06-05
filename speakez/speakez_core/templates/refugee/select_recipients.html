@@ -73,26 +73,5 @@
     function next() {
         window.location = `select_message/${recipientList.join('&')}/`
     }
-
-    {% comment %} send post request to views.select_recipients 
-    function submit() {
-        console.log({'data': recipientList})
-        $.ajax({
-            type: "POST",
-            url: '/admin/select_recipients/',
-            data: {'data': recipientList},
-            success: function(data) {
-                if (data) {
-                    document.write(data);
-                } else {
-                    console.log(data)
-                }
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.status);
-                console.log(thrownError)
-            },
-        });
-    } {% endcomment %}
 </script>
 {% endblock %}
