@@ -1,16 +1,22 @@
-from django.forms import ModelForm, Textarea
+from django.forms import ModelForm, Textarea, CheckboxSelectMultiple
 from .models import CallMessage, Category, Refugee
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
+
+
+
 class CallMessageForm(ModelForm):
     class Meta:
         model = CallMessage
-        fields = ['duration', 'title', 'content', 'audio']
+        fields = ['duration', 'title', 'category','content', 'audio']
         widgets = {
             'content': Textarea(attrs={'cols': 60, 'rows': 10}),
+            'category': CheckboxSelectMultiple(),
         }
 
 
@@ -28,3 +34,9 @@ class RefugeeForm(ModelForm):
         model = Refugee
         fields = ('first_name','middle_name','last_name','gender','age','phone_number','demographic_info','ethnicity',
         'street_number','street_name','city','zip_code','emergency_contact','martial_status')
+        
+class CategoryForm(ModelForm):
+    class Meta:
+        model = Category
+        fields = ['title']
+        

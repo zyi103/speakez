@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Refugee, Category, CallMessage, CallLog, CallLogDetail
-from .forms import CallMessageForm, RefugeeForm
+from .forms import CallMessageForm, RefugeeForm, CategoryForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -263,6 +263,16 @@ def add_message(request):
         if form.is_valid():
             form.save()
     return render(request, 'message/edit_message.html', context={"form": form, 'is_update': False})
+
+@login_required 
+def add_category(request):
+    form = CategoryForm()
+    if request.method.lower() == "post":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('add_message')
+    return render(request, 'message/add_category.html', context={"form": form})
 
 
 @login_required 
