@@ -38,6 +38,8 @@
                             {% endif %} 
             enctype="multipart/form-data"> {% csrf_token %}
             <div class="col-sm-4">
+                {{ form.category|as_crispy_field }}
+                <button type="button" class="btn btn-primary" onclick="add_category()"><i class="fa fa-plus" aria-hidden="true"></i></button>
                 {{ form.title|as_crispy_field }}
             </div>
             <div class="col-sm-12">
@@ -48,6 +50,11 @@
     </div>
 </div>
 
+<script>
+    function add_category(){
+        window.location = `/admin/add_category/`
+    }
+</script>
 <script src="{% static "js/recorder.js" %}"></script>
 <script src="https://cdn.webrtc-experiment.com/MediaStreamRecorder.js"> </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

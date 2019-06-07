@@ -85,6 +85,7 @@ $('form').submit(function (e) {
             var formData = new FormData();
             formData.append("audio", audioBlob, document.getElementById("id_title").value + '.wav');
             formData.append("title", document.getElementById("id_title").value);
+            formData.append("category", document.getElementById("id_category").value);
             formData.append("content", document.getElementById("id_content").value);
             formData.append("duration", audio.duration);
 
