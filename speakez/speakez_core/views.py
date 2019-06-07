@@ -1,12 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Refugee, Category, CallMessage, CallLog, CallLogDetail
-<<<<<<< HEAD
-from .forms import CallMessageForm, RefugeeForm
-from django.contrib.sites import shortcuts 
-=======
 from .forms import CallMessageForm, RefugeeForm, CategoryForm
->>>>>>> category
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -192,12 +187,8 @@ def call_recipients(request):
         # comment this line out in production env to recieve the actual call message
         # ===============================================================
         # PRODUCTION
-<<<<<<< HEAD
         audio_url = request.get_host() + '/' + CallMessage.objects.filter(pk=call_message_id).first().audio.url
         print(audio_url)
-=======
-        # audio_url = CallMessage.objects.filter(pk=call_message_id).first().audio.url
->>>>>>> category
         # -----------------------------------------------------------
         # DEVELOPMENT 
         # audio_url = 'https://ccrma.stanford.edu/~jos/wav/gtr-nylon22.wav'  
