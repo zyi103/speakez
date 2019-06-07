@@ -40,6 +40,7 @@ urlpatterns = [
     path('admin/view_report/', views.view_report, name='view_report'),
     path('admin/view_report/<uuid:call_log_id>/', views.view_report_detail, name='view_report_detail'),
     path('admin/add_messages/', views.add_message, name='add_message'),
+    path('admin/add_category/', views.add_category, name='add_category'),
     path('admin/view_messages/<uuid:call_message_id>/', views.call_message_detail, name='update_message_detail'),
     path('admin/view_messages/', views.list_call_messages, name='message_list'),
     # url(r'^', RedirectView.as_view(url='/accounts/login/'))

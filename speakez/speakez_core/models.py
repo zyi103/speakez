@@ -73,7 +73,7 @@ class CallMessage(models.Model):
     duration = models.FloatField(_("Duration in seconds"))
     title = models.CharField(_("Title"), max_length=250)
     content = models.TextField(_("Content"), blank=True, null=True)
-    category = models.ManyToManyField(Category)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     audio = models.FileField(_("Audio"), upload_to='uploads/', validators=[FileExtensionValidator(allowed_extensions=['wav'])], blank=True, null=True)
 
     def __str__(self):

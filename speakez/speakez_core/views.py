@@ -1,8 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Refugee, Category, CallMessage, CallLog, CallLogDetail
+<<<<<<< HEAD
 from .forms import CallMessageForm, RefugeeForm
 from django.contrib.sites import shortcuts 
+=======
+from .forms import CallMessageForm, RefugeeForm, CategoryForm
+>>>>>>> category
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -188,8 +192,12 @@ def call_recipients(request):
         # comment this line out in production env to recieve the actual call message
         # ===============================================================
         # PRODUCTION
+<<<<<<< HEAD
         audio_url = request.get_host() + '/' + CallMessage.objects.filter(pk=call_message_id).first().audio.url
         print(audio_url)
+=======
+        # audio_url = CallMessage.objects.filter(pk=call_message_id).first().audio.url
+>>>>>>> category
         # -----------------------------------------------------------
         # DEVELOPMENT 
         # audio_url = 'https://ccrma.stanford.edu/~jos/wav/gtr-nylon22.wav'  
@@ -261,19 +269,46 @@ def recipients_detail(request, recipient_id):
 @login_required 
 def add_message(request):
     form = CallMessageForm()
+    category = Category.objects.all()
     if request.method.lower() == "post":
         form = CallMessageForm(request.POST, request.FILES)
+        print('==========================================')
+        print(form)
+        if form.is_valid():
+            print("valid")
+            form.save()
+    return render(request, 'message/edit_message.html', context={"form": form, 'category': category, 'is_update': False})
+
+@login_required 
+def add_category(request):
+    form = CategoryForm()
+    if request.method.lower() == "post":
+        form = CategoryForm(request.POST)
         if form.is_valid():
             form.save()
-    return render(request, 'message/edit_message.html', context={"form": form, 'is_update': False})
+            return redirect('add_message')
+    return render(request, 'message/add_category.html', context={"form": form})
 
 
 @login_required 
 def list_call_messages(request):
-    messages = CallMessage.objects.all().values_list('title', 'category', 'audio', 'duration', 'content','id')
-    messages_json = json.dumps(list(messages), cls=DjangoJSONEncoder)
-    print(messages_json)
-    return render(request, 'message/message_list.html', context={"messages": messages_json})
+    messages_list = CallMessage.objects.all().values('title', 'category', 'audio', 'duration', 'content','id')
+    messages = create_messages_json(messages_list)
+    return render(request, 'message/message_list.html', context={"messages": messages})
+
+def create_messages_json(messages_list):
+    messages = []
+    for message in messages_list:
+        message_dict = {}
+        message_dict['title'] = message['title']
+        message_dict['category'] = Category.objects.filter(pk=message['category']).first().title
+        message_dict['audio'] = message['audio']
+        message_dict['duration'] = message['duration']
+        message_dict['content'] = message['content']
+        message_dict['id'] = message['id']
+        messages.append(message_dict)
+    return json.dumps(list(messages), cls=DjangoJSONEncoder)
+    
 
 
 @login_required 
@@ -308,13 +343,14 @@ def view_report(request):
         call_time = call['date_time_created']
         call_message = get_call_message(call['message_sent_id'])
         audio_url = call_message.audio.url
+        category = call_message.category
         content = call_message.content
         call_event_count = get_call_count(call_log_id)
         success_event_count = get_success_count(call_log_id)
         recipient_list = get_recipient_list(call_log_id)
         message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
 
-        report = create_report(call_log_id,call_time,content,audio_url,call_event_count,success_event_count,recipient_list,message_id)
+        report = create_report(call_log_id,call_time,category, content,audio_url,call_event_count,success_event_count,recipient_list,message_id)
         reports.append(report)
     
     return render(request, 'report/view_report.html', context={'calls': reports})
@@ -345,12 +381,12 @@ def get_recipient_list(call_log_id):
         recipient_list.append(str(call_event['recipient_id']))
     return recipient_list
 
-def create_report(call_log_id, datetime, content, audio_url, call_event_count, success_event_count, recipient_list, message_id):
+def create_report(call_log_id, datetime, category, content, audio_url, call_event_count, success_event_count, recipient_list, message_id):
     report = {}
     report['call_log_id'] = str(call_log_id)
     report['date'] = datetime.strftime("%m/%d/%Y")
     report['time'] = datetime.strftime("%H:%M:%S")
-    report['category'] = 'category'
+    report['category'] = str(category)
     report['content'] = content
     report['audio'] = audio_url
     report['call_event_count'] = call_event_count
