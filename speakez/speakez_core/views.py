@@ -133,6 +133,7 @@ class ChangePasswordView(generics.UpdateAPIView):
 
 @login_required
 def dashboard(request):
+    print()
     return render(request, template_name='admin.html')
 
 
@@ -186,10 +187,10 @@ def call_recipients(request):
         # comment this line out in production env to recieve the actual call message
         # ===============================================================
         # PRODUCTION
-        # audio_url = CallMessage.objects.filter(pk=call_message_id).first().audio.url
+        audio_url = request.get_host() + CallMessage.objects.filter(pk=call_message_id).first().audio.url
         # -----------------------------------------------------------
         # DEVELOPMENT 
-        audio_url = 'https://ccrma.stanford.edu/~jos/wav/gtr-nylon22.wav'  
+        # audio_url = 'https://ccrma.stanford.edu/~jos/wav/gtr-nylon22.wav'  
         #################################################################
         xml_string = '<Response><Play>' + audio_url + '</Play></Response>'
         twimlet_url = urllib.parse.quote_plus(xml_string)
