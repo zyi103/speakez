@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load fontawesome %}
+{% load crispy_forms_tags %}
+{% block title %}Message{% endblock %}
+
+{% block content %}
+<div class="row text-center bg-secondary">
+    <div class="col-sm-12">
+        <div class="login-title">
+            <h2 class="text-white">Add Category</h2>
+        </div>
+    </div>
+</div>
+<form id="category" class="row-no-padding" method="POST"> {% csrf_token %}
+    {{ form|crispy }}
+    <button id="submit" type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}
