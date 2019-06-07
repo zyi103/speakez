@@ -16,7 +16,6 @@ class CallMessageForm(ModelForm):
         fields = ['duration', 'title', 'category','content', 'audio']
         widgets = {
             'content': Textarea(attrs={'cols': 60, 'rows': 10}),
-            'category': CheckboxSelectMultiple(),
         }
 
 
