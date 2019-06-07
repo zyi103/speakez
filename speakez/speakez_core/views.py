@@ -187,8 +187,7 @@ def call_recipients(request):
         # comment this line out in production env to recieve the actual call message
         # ===============================================================
         # PRODUCTION
-        audio_url = request.get_host() + '/' + CallMessage.objects.filter(pk=call_message_id).first().audio.url
-        print(audio_url)
+        audio_url = request.get_host() + CallMessage.objects.filter(pk=call_message_id).first().audio.url
         # -----------------------------------------------------------
         # DEVELOPMENT 
         # audio_url = 'https://ccrma.stanford.edu/~jos/wav/gtr-nylon22.wav'  
