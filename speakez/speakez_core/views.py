@@ -187,7 +187,7 @@ def call_recipients(request):
         # comment this line out in production env to recieve the actual call message
         # ===============================================================
         # PRODUCTION
-        audio_url = request.get_host() + CallMessage.objects.filter(pk=call_message_id).first().audio.url
+        audio_url = '{}://{}/'.format(request.scheme, request.get_host()) + CallMessage.objects.filter(pk=call_message_id).first().audio.url
         # -----------------------------------------------------------
         # DEVELOPMENT 
         # audio_url = 'https://ccrma.stanford.edu/~jos/wav/gtr-nylon22.wav'  
@@ -227,7 +227,7 @@ def call_recipients(request):
                 #                                                     clog_detail.call_log.message_sent, 
                 #                                                     clog_detail.call_log.date_time_created))
         else:
-            return HttpResponse(status=201)
+            return HttpResponse("Too many recipients", status=400)
                 
         return HttpResponse(status=200)
 

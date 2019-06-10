@@ -106,7 +106,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-env/ 
-digital-sign-service/testdatabase
-
-digital-sign-service/db\.sqlite3
+env/
