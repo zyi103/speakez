@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.http import FileResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Refugee, Category, CallMessage, CallLog, CallLogDetail
 from .forms import CallMessageForm, RefugeeForm, CategoryForm
@@ -446,4 +447,7 @@ def logout_view(request):
     logout(request)
     return render(request, 'registration/logout.html')
 
-
+@login_required
+def get_audio_file(request, filename):
+    filename = os.path.join(settings.BASE_DIR,'media','uploads',filename+'.wav')
+    return FileResponse(open(filename, 'rb'))
