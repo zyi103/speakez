@@ -20,7 +20,7 @@
 <div class="row body">
     <div class="col-sm-12">
     {% if is_update %}
-        <audio style="width:50%" controls src="{{ message.audio.url }}" type="audio/wav" id="audio"></audio>
+        <audio style="width:50%" controls src="/admin/audio/{{ message.audio.name }}/" type="audio/wav" id="audio"></audio>
     {% else %}
         <audio style="width:50%" controls autoplay id="audio"></audio>
     {% endif %}
