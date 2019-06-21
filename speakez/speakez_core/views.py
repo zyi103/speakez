@@ -3,6 +3,7 @@ from django.http import FileResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Refugee, Category, CallMessage, CallLog, CallLogDetail
 from .forms import CallMessageForm, RefugeeForm, CategoryForm
+from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -36,7 +37,9 @@ import unicodedata
 import json
 import urllib
 import uuid
+import hashlib
 from itertools import chain
+
 
    
 
@@ -188,12 +191,16 @@ def call_recipients(request):
         # comment this line out in production env to recieve the actual call message
         # ===============================================================
         # PRODUCTION
-        audio_url = '{}://{}'.format(request.scheme, request.get_host()) + CallMessage.objects.filter(pk=call_message_id).first().audio.url
+        audio_path = os.path.join(settings.BASE_DIR,'media',CallMessage.objects.filter(pk=call_message_id).first().audio.url)
+        cache_key = hashlib.sha256().hexdigest()
+        cache.set(cache_key, audio_path , 300)
+        cache_url = '{}://{}'.format(request.scheme, request.get_host()) + '/audio_message/' + cache_key + '/'
+
         # -----------------------------------------------------------
         # DEVELOPMENT 
         # audio_url = 'https://ccrma.stanford.edu/~jos/wav/gtr-nylon22.wav'  
         #################################################################
-        xml_string = '<Response><Play>' + audio_url + '</Play></Response>'
+        xml_string = '<Response><Play>' + cache_url + '</Play></Response>'
         twimlet_url = urllib.parse.quote_plus(xml_string)
 
 
@@ -453,3 +460,10 @@ def logout_view(request):
 def get_audio_file(request, filename):
     filename = os.path.join(settings.BASE_DIR,'media',filename)
     return FileResponse(open(filename, 'rb'))
+
+def get_audio_message(request, key):
+    audio_path = cache.get(key)
+    if audio_path is not None:
+        return FileResponse(open(audio_path, 'rb'))
+    else:
+        return HttpResponse('Audio not get',status=601)
