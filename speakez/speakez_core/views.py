@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.http import FileResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Refugee, Category, CallMessage, CallLog, CallLogDetail
 from .forms import CallMessageForm, RefugeeForm, CategoryForm
@@ -282,20 +283,22 @@ def add_category(request):
 
 @login_required 
 def list_call_messages(request):
-    messages_list = CallMessage.objects.all().values('title', 'category', 'audio', 'duration', 'content','id')
+    messages_list = CallMessage.objects.all()
     messages = create_messages_json(messages_list)
+    print(messages)
     return render(request, 'message/message_list.html', context={"messages": messages})
 
 def create_messages_json(messages_list):
     messages = []
     for message in messages_list:
         message_dict = {}
-        message_dict['title'] = message['title']
-        message_dict['category'] = Category.objects.filter(pk=message['category']).first().title
-        message_dict['audio'] = message['audio']
-        message_dict['duration'] = message['duration']
-        message_dict['content'] = message['content']
-        message_dict['id'] = message['id']
+        message_dict['title'] = message.title
+        message_dict['category'] = str(message.category.title)
+        message_dict['audio_name'] = message.audio.name
+        message_dict['duration'] = message.duration
+        message_dict['content'] = message.content
+        message_dict['id'] = message.id
+        print(message_dict)
         messages.append(message_dict)
     return json.dumps(list(messages), cls=DjangoJSONEncoder)
     
@@ -332,7 +335,7 @@ def view_report(request):
         call_log_id = call['id']
         call_time = call['date_time_created']
         call_message = get_call_message(call['message_sent_id'])
-        audio_url = call_message.audio.url
+        audio_name = call_message.audio.name
         category = call_message.category
         content = call_message.content
         call_event_count = get_call_count(call_log_id)
@@ -340,7 +343,7 @@ def view_report(request):
         recipient_list = get_recipient_list(call_log_id)
         message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
 
-        report = create_report(call_log_id,call_time,category, content,audio_url,call_event_count,success_event_count,recipient_list,message_id)
+        report = create_report(call_log_id,call_time,category,content,audio_name,call_event_count,success_event_count,recipient_list,message_id)
         reports.append(report)
     
     return render(request, 'report/view_report.html', context={'calls': reports})
@@ -371,14 +374,14 @@ def get_recipient_list(call_log_id):
         recipient_list.append(str(call_event['recipient_id']))
     return recipient_list
 
-def create_report(call_log_id, datetime, category, content, audio_url, call_event_count, success_event_count, recipient_list, message_id):
+def create_report(call_log_id, datetime, category, content, audio_name, call_event_count, success_event_count, recipient_list, message_id):
     report = {}
     report['call_log_id'] = str(call_log_id)
     report['date'] = datetime.strftime("%m/%d/%Y")
     report['time'] = datetime.strftime("%H:%M:%S")
     report['category'] = str(category)
     report['content'] = content
-    report['audio'] = audio_url
+    report['audio_name'] = audio_name
     report['call_event_count'] = call_event_count
     report['success_event_count'] = success_event_count
     report['recipient_list'] = recipient_list
@@ -446,4 +449,7 @@ def logout_view(request):
     logout(request)
     return render(request, 'registration/logout.html')
 
-
+@login_required
+def get_audio_file(request, filename):
+    filename = os.path.join(settings.BASE_DIR,'media',filename)
+    return FileResponse(open(filename, 'rb'))
