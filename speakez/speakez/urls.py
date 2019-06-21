@@ -43,8 +43,9 @@ urlpatterns = [
     path('admin/add_category/', views.add_category, name='add_category'),
     path('admin/view_messages/<uuid:call_message_id>/', views.call_message_detail, name='update_message_detail'),
     path('admin/view_messages/', views.list_call_messages, name='message_list'),
-    path('admin/audio/<filename>/', views.get_audio_file, name='get_audio_file')
+    path('admin/audio/<path:filename>/', views.get_audio_file, name='get_audio_file')
     # url(r'^', RedirectView.as_view(url='/accounts/login/'))
     # this redirect will not allow websever to serve message from media file.
     # use 404 redirect page instead
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+# ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
