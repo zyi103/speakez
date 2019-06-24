@@ -28,6 +28,7 @@
 {% endif %}
 <script type="application/javascript">
     let dataSet = {{messages|safe}}
+    console.log(dataSet)
 
     $(document).ready(function () {
         let table = $('#messages').DataTable({
@@ -43,7 +44,7 @@
                 },
                 {  
                     mRender : function ( data, type, row ) { 
-                    return `<audio style="width:100%" controls id="${row.pk}" src='/media/${row.audio}'>`
+                    return `<audio style="width:100%" controls id="${row.pk}" src='/admin/audio/${row.audio_name}/'>`
                     },
                     width: "45%",
                 },
