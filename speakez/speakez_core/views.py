@@ -191,10 +191,11 @@ def call_recipients(request):
         # comment this line out in production env to recieve the actual call message
         # ===============================================================
         # PRODUCTION
-        audio_path = os.path.join(settings.BASE_DIR,'media',CallMessage.objects.filter(pk=call_message_id).first().audio.url)
+        audio_path = CallMessage.objects.filter(pk=call_message_id).first().audio.path
         cache_key = hashlib.sha256().hexdigest()
         cache.set(cache_key, audio_path , 300)
         cache_url = '{}://{}'.format(request.scheme, request.get_host()) + '/audio_message/' + cache_key + '/'
+      
 
         # -----------------------------------------------------------
         # DEVELOPMENT 
@@ -466,4 +467,4 @@ def get_audio_message(request, key):
     if audio_path is not None:
         return FileResponse(open(audio_path, 'rb'))
     else:
-        return HttpResponse('Audio not get',status=601)
+        return HttpResponse('audio not get, key: ' + key,status=550)
