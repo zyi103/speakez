@@ -10,8 +10,6 @@ COPY uwsgi.ini /var/webapp/uwsgi.ini
 
 RUN pip install uwsgi
 
-RUN pip install python-memcached
-
 COPY . /var/webapp
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
