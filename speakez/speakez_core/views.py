@@ -37,7 +37,6 @@ import unicodedata
 import json
 import urllib
 import uuid
-import hashlib
 from itertools import chain
 
 
@@ -192,7 +191,7 @@ def call_recipients(request):
         # ===============================================================
         # PRODUCTION
         audio_path = CallMessage.objects.filter(pk=call_message_id).first().audio.path
-        cache_key = hashlib.sha256().hexdigest()
+        cache_key = uuid.uuid4().hex
         cache.set(cache_key, audio_path , 300)
         cache_url = '{}://{}'.format(request.scheme, request.get_host()) + '/audio_message/' + cache_key + '/'
       

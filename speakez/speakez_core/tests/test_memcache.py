@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.core.cache import cache
+import uuid
 
 
 class MemcacheTestCase(TestCase):
@@ -18,4 +19,9 @@ class MemcacheTestCase(TestCase):
         print(cache.get('4'))
         print(cache.get('5'))
         print('==================memcache test result===================')
+        print(uuid.uuid4().hex)
+        print(uuid.uuid4().hex)
+        print(uuid.uuid4().hex)
+        print(uuid.uuid4().hex)
+        print(uuid.uuid4().hex)
 
