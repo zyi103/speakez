@@ -18,9 +18,5 @@ services:
         restart: always
         ports:
             - 9080:9000
-            
-    memcached:
-        image: memcached
-        ports:
-            - "11211:11211"
+        
  
