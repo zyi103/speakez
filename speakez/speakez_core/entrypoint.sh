@@ -7,4 +7,4 @@ echo "Collecting Static Assets"
 python /var/webapp/manage.py collectstatic --noinput
 
 echo "starting memcached server"
-service memcached start
+sudo service memcached start
