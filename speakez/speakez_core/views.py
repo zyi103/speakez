@@ -479,10 +479,10 @@ def save_call_status(request):
         form = CallStatusForm(call_status)
         if form.is_valid:
             form.save()
+            return HttpResponse('callback recieved,' + str(call_status) ,status=200)
         else: 
             return HttpResponse('form not valid' ,status=560)
 
-    return HttpResponse('callback recieved,' + str(call_status) ,status=200)
 
 
 def view_callback(request):
