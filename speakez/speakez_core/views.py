@@ -475,7 +475,7 @@ def get_audio_message(request, key):
 @csrf_exempt
 def save_call_status(request):
     if request.method.lower() == 'post':
-        call_status = json.load(request)
+        call_status = json.load(request.POST)
         form = CallStatusForm(call_status)
         if form.is_valid:
             form.save()

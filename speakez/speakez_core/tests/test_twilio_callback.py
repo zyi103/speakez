@@ -13,4 +13,5 @@ class TwilioCallback(TestCase):
             d = json.load(f)
             request = json.dumps(d)
         
-        requests.post("http://127.0.0.1:8000/twilio/call_status_event/", data=request)
+        r = requests.post("http://speakez.dev.ischool.syr.edu/twilio/call_status_event/", data=request)
+        print (r)
