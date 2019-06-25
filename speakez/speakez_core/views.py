@@ -218,9 +218,12 @@ def call_recipients(request):
                 url = 'https://twimlets.com/echo?Twiml=' + twimlet_url
                 phone_num = '+1' + recipients[i].get('phone_number')
                 host_num = '+16414549805'
+                callback_url = '{}://{}'.format(request.scheme, request.get_host()) + '/twilio/call_status_event/'
 
                 call = client.calls.create(
                                     machine_detection='Enable',
+                                    status_callback= callback_url,
+                                    status_callback_method='POST',
                                     url= url,
                                     to= phone_num,
                                     from_= host_num
@@ -467,3 +470,7 @@ def get_audio_message(request, key):
         return FileResponse(open(audio_path, 'rb'))
     else:
         return HttpResponse('audio not get, key: ' + key,status=550)
+
+def save_call_status(request):
+    print('===============callback status=======================')
+    print(request.POST)
