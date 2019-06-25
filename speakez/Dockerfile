@@ -18,5 +18,6 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 9000
 EXPOSE 9001
+EXPOSE 3000
 
 CMD [ "entrypoint.sh" ]
