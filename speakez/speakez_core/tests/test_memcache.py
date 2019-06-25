@@ -4,24 +4,22 @@ import uuid
 
 
 class MemcacheTestCase(TestCase):
-    def setUp(self):
-        cache.set('1', 'one')
-        cache.set('2', 'two')
-        cache.set('3', 'three')
-        cache.set('4', 'four')
-        cache.set('5', 'five')
-
     def test_cache_get(self):
+        one = uuid.uuid4().hex
+        two = uuid.uuid4().hex
+        three = uuid.uuid4().hex
+        four = uuid.uuid4().hex
+        five = uuid.uuid4().hex
+        cache.set(one, 'one')
+        cache.set(two, 'two')
+        cache.set(three, 'three')
+        cache.set(four, 'four')
+        cache.set(five, 'five')
         print('==================memcache test result===================')
-        print(cache.get('1'))
-        print(cache.get('2'))
-        print(cache.get('3'))
-        print(cache.get('4'))
-        print(cache.get('5'))
+        print(cache.get(one))
+        print(cache.get(two))
+        print(cache.get(three))
+        print(cache.get(four))
+        print(cache.get(five))
         print('==================memcache test result===================')
-        print(uuid.uuid4().hex)
-        print(uuid.uuid4().hex)
-        print(uuid.uuid4().hex)
-        print(uuid.uuid4().hex)
-        print(uuid.uuid4().hex)
 
