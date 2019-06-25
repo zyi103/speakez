@@ -360,8 +360,8 @@ def view_report(request):
 
 def get_success_count(call_log_id):
     # Twilio call
-    account_sid = settings.TWILLIO_KEY
-    auth_token = settings.TWILLIO_TOKEN
+    account_sid = settings.TWILIO_KEY
+    auth_token = settings.TWILIO_TOKEN
     client = Client(account_sid, auth_token)
 
     success_count = 0
@@ -405,8 +405,8 @@ def get_call_message(message_sent_id):
 @login_required
 def view_report_detail(request, call_log_id):
     # Twilio call
-    account_sid = settings.TWILLIO_KEY
-    auth_token = settings.TWILLIO_TOKEN
+    account_sid = settings.TWILIO_KEY
+    auth_token = settings.TWILIO_TOKEN
     client = Client(account_sid, auth_token)
 
     message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
