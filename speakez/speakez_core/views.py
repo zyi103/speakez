@@ -174,8 +174,8 @@ def select_message(request, recipients):
 def call_recipients(request):
     if request.method.lower() == "post":
         # Twilio call
-        account_sid = settings.TWILLIO_KEY
-        auth_token = settings.TWILLIO_TOKEN
+        account_sid = settings.TWILIO_KEY
+        auth_token = settings.TWILIO_TOKEN
         client = Client(account_sid, auth_token)
 
         # logging
@@ -217,7 +217,7 @@ def call_recipients(request):
                 # xml url created by echo Twimlet
                 url = 'https://twimlets.com/echo?Twiml=' + twimlet_url
                 phone_num = '+1' + recipients[i].get('phone_number')
-                host_num = '+16414549805'
+                host_num = settings.TWILIO_PHONE_NUM
                 callback_url = '{}://{}'.format(request.scheme, request.get_host()) + '/twilio/call_status_event/'
 
                 call = client.calls.create(
