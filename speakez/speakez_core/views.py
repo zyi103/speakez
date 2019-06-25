@@ -475,6 +475,8 @@ def get_audio_message(request, key):
 @csrf_exempt
 def save_call_status(request):
     cache.set('twilio_callback',str(request.POST))
+    return HttpResponse('callback recieved,' + str(request.POST) ,status=200)
+
 
 def view_callback(request):
     callback = cache.get('twilio_callback')
