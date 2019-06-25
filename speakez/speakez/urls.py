@@ -46,6 +46,7 @@ urlpatterns = [
     path('admin/audio/<path:filename>/', views.get_audio_file, name='get_audio_file'),
     path('audio_message/<key>/', views.get_audio_message, name='get_audio_message'),
     path('twilio/call_status_event/', views.save_call_status, name='save_call_status'),
+    path('twilio/debug/', views.view_callback),
     # url(r'^', RedirectView.as_view(url='/accounts/login/'))
     # this redirect will not allow websever to serve message from media file.
     # use 404 redirect page instead

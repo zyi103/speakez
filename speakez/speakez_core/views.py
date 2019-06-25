@@ -471,6 +471,14 @@ def get_audio_message(request, key):
     else:
         return HttpResponse('audio not get, key: ' + key,status=550)
 
+
+@csrf_exempt
 def save_call_status(request):
-    print('===============callback status=======================')
-    print(request.POST)
+    cache.set('twilio_callback',str(request.POST))
+
+def view_callback(request):
+    callback = cache.get('twilio_callback')
+    if callback is not None:
+        return HttpResponse(callback,status=200)
+    else:
+        return HttpResponse('status not get',status=550)
