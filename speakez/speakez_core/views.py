@@ -477,9 +477,7 @@ def get_audio_message(request, key):
 def save_call_status(request):
     logger = logging.getLogger(__name__)
     if request.method.lower() == 'post':
-        logger.debug(request.POST)
-        print(logger)
-        call_status = json.load(request.POST)
+        call_status = json.dumps(request.POST)
         form = CallStatusForm(call_status)
         if form.is_valid:
             logger.debug('======================START SAVING==================')
