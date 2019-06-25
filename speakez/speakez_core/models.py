@@ -104,3 +104,40 @@ class CallLogDetail(models.Model):
     call_log = models.ForeignKey(CallLog, on_delete=models.CASCADE)
 
 
+class CallStatus(models.Model):
+    class Meta:
+        verbose_name = 'Call Status'
+        verbose_name_plural = "Call Statuses"
+
+    Called = models.CharField(_("phone number being called"), max_length=64)
+    ToState = models.CharField(_(""), max_length=64)
+    CallerCountry = models.CharField(_(""), max_length=64)
+    Direction = models.CharField(_(""), max_length=64)
+    Timestamp = models.CharField(_(""), max_length=64)
+    CallbackSource = models.CharField(_(""), max_length=64)
+    SipResponseCode = models.CharField(_(""), max_length=64)
+    CallerState = models.CharField(_(""), max_length=64)
+    ToZip = models.CharField(_(""), max_length=64)
+    SequenceNumber = models.CharField(_(""), max_length=64)
+    CallSid = models.CharField(primary_key=True, max_length=64)
+    To = models.CharField(_(""), max_length=64)
+    CallerZip = models.CharField(_(""), max_length=64)
+    ToCountry = models.CharField(_(""), max_length=64)
+    CalledZip = models.CharField(_(""), max_length=64)
+    ApiVersion = models.CharField(_(""), max_length=64)
+    CalledCity = models.CharField(_(""), max_length=64)
+    CallStatus = models.CharField(_(""), max_length=64)
+    Duration = models.CharField(_(""), max_length=64)
+    From = models.CharField(_(""), max_length=64)
+    CallDuration = models.CharField(_(""), max_length=64)
+    AccountSid = models.CharField(_(""), max_length=64)
+    CalledCountry = models.CharField(_(""), max_length=64)
+    CallerCity = models.CharField(_(""), max_length=64)
+    ToCity = models.CharField(_(""), max_length=64)
+    FromCountry = models.CharField(_(""), max_length=64)
+    Caller = models.CharField(_(""), max_length=64)
+    FromCity = models.CharField(_(""), max_length=64)
+    CalledState = models.CharField(_(""), max_length=64)
+    FromZip = models.CharField(_(""), max_length=64)
+    AnsweredBy = models.CharField(_(""), max_length=64)
+    FromState = models.CharField(_(""), max_length=64)

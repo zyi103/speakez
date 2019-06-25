@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import Refugee, Category, CallMessage, CallLog, CallLogDetail
-from .forms import CallMessageForm, RefugeeForm, CategoryForm
+from .models import Refugee, Category, CallMessage, CallLog, CallLogDetail, CallStatus
+from .forms import CallMessageForm, RefugeeForm, CategoryForm, CallStatusForm
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -474,13 +474,17 @@ def get_audio_message(request, key):
 
 @csrf_exempt
 def save_call_status(request):
-    cache.set('twilio_callback',str(request.POST))
-    return HttpResponse('callback recieved,' + str(request.POST) ,status=200)
+    if request.method.lower() == 'post':
+        call_status = json.load(request)
+        form = CallStatusForm(call_status)
+        if form.is_valid:
+            form.save()
+        else: 
+            return HttpResponse('form not valid' ,status=560)
+
+    return HttpResponse('callback recieved,' + str(call_status) ,status=200)
 
 
 def view_callback(request):
-    callback = cache.get('twilio_callback')
-    if callback is not None:
-        return HttpResponse(callback,status=200)
-    else:
-        return HttpResponse('status not get',status=550)
+    call_status = CallStatus.objects.all().values()
+    return HttpResponse(call_status,status=200)
