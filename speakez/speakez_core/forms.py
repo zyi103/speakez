@@ -1,5 +1,5 @@
 from django.forms import ModelForm, Textarea, CheckboxSelectMultiple
-from .models import CallMessage, Category, Refugee
+from .models import CallMessage, Category, Refugee, CallStatus
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -39,3 +39,7 @@ class CategoryForm(ModelForm):
         model = Category
         fields = ['title']
         
+class CallStatusForm(ModelForm):
+    class Meta:
+        model = CallStatus
+        fields = '__all__'
