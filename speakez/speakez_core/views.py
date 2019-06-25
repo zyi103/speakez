@@ -36,6 +36,7 @@ import datetime
 import unicodedata
 import json
 import urllib
+import logging
 import uuid
 from itertools import chain
 
@@ -474,11 +475,16 @@ def get_audio_message(request, key):
 
 @csrf_exempt
 def save_call_status(request):
+    logger = logging.getLogger(__name__)
     if request.method.lower() == 'post':
+        logger.debug(request.POST)
+        print(logger)
         call_status = json.load(request.POST)
         form = CallStatusForm(call_status)
         if form.is_valid:
+            logger.debug('======================START SAVING==================')
             form.save()
+            logger.debug("saved!!!")
             return HttpResponse('callback recieved,' + str(call_status) ,status=200)
         else: 
             return HttpResponse('form not valid' ,status=560)
@@ -486,5 +492,4 @@ def save_call_status(request):
 
 
 def view_callback(request):
-    call_status = CallStatus.objects.all().values()
-    return HttpResponse(call_status,status=200)
+    return FileResponse(open(os.path.join(settings.BASE_DIR,'speakez_core','debug.log'),'rb'),status=200)
