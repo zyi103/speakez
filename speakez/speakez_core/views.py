@@ -425,8 +425,8 @@ def create_report_detail (recipient, twilio):
     report_detail['last_name'] = recipient['last_name']
     report_detail['phone_number'] = recipient['phone_number']
     
-    report_detail['duration'] = twilio.duration
-    report_detail['status'] = twilio.status
+    report_detail['duration'] = twilio.CallDuration
+    report_detail['status'] = twilio.CallStatus
     return report_detail
 
 @login_required 
