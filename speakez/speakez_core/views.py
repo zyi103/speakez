@@ -412,7 +412,7 @@ def view_report_detail(request, call_log_id):
     call_details = list(CallLogDetail.objects.filter(call_log_id=call_log_id).values())
     for i in range(len(call_details)):
         recipient = Refugee.objects.filter(pk=call_details[i]['recipient_id']).values().first()
-        twilio_report = CallStatus.objects.filter(pk=call_details[i]['call_sid']).first()
+        twilio_report = CallStatus.objects.filter(pk="['"+call_details[i]['call_sid']+"']").first()
         recipients.append(create_report_detail(recipient, twilio_report))
     recipients = json.dumps(recipients)
     return render(request, 'report/view_report_detail.html', context={"message" : message, "recipients": recipients})
@@ -424,9 +424,12 @@ def create_report_detail (recipient, twilio):
     report_detail['middle_name'] = recipient['middle_name']
     report_detail['last_name'] = recipient['last_name']
     report_detail['phone_number'] = recipient['phone_number']
-    
-    report_detail['duration'] = twilio.CallDuration
-    report_detail['status'] = twilio.CallStatus
+    if twilio is not None:
+        report_detail['duration'] = twilio.CallDuration
+        report_detail['status'] = twilio.CallStatus
+    else: 
+        report_detail['duration'] = "unknow"
+        report_detail['status'] = "unknow"
     return report_detail
 
 @login_required 
