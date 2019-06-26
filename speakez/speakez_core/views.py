@@ -175,9 +175,9 @@ def select_message(request, recipients):
 def call_recipients(request):
     if request.method.lower() == "post":
         # Twilio call
-        account_sid = settings.TWILIO_KEY
-        auth_token = settings.TWILIO_TOKEN
-        client = Client(account_sid, auth_token)
+        # account_sid = settings.TWILIO_KEY
+        # auth_token = settings.TWILIO_TOKEN
+        # client = Client(account_sid, auth_token)
 
         # logging
         call_message_id = request.POST.getlist('message[pk]')[0]
@@ -417,7 +417,7 @@ def view_report_detail(request, call_log_id):
     call_details = list(CallLogDetail.objects.filter(call_log_id=call_log_id).values())
     for i in range(len(call_details)):
         recipient = Refugee.objects.filter(pk=call_details[i]['recipient_id']).values().first()
-        twilio_report = client.calls(call_details[i]['call_sid']).fetch()
+        twilio_report = CallStatus.objects.filter(pk=call_details[i]['call_sid']).first()
         recipients.append(create_report_detail(recipient, twilio_report))
     recipients = json.dumps(recipients)
     return render(request, 'report/view_report_detail.html', context={"message" : message, "recipients": recipients})
@@ -478,17 +478,15 @@ def save_call_status(request):
     if request.method.lower() == 'post':
         logger = logging.getLogger('django')
         call_status = dict(request.POST)
-        logger.info('======================call_status==================')
-        logger.info(call_status)
-        logger.info(type(call_status))
 
         form = CallStatusForm(call_status)
         if form.is_valid:
-            logger.debug('======================START SAVING==================')
+            logger.debug('======================CALLBACK REVIEVED==================')
             form.save()
-            logger.debug("saved!!!")
+            logger.debug("==========================SAVED!=========================")
             return HttpResponse('callback recieved,' + str(call_status) ,status=200)
         else: 
+            logger.debug("=====================CALLBACK NOT VALID=========================")
             return HttpResponse('form not valid' ,status=560)
 
 
