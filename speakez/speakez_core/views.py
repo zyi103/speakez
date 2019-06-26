@@ -477,14 +477,12 @@ def get_audio_message(request, key):
 def save_call_status(request):
     if request.method.lower() == 'post':
         logger = logging.getLogger('django')
-        call_status = json.dumps(request.POST)
+        call_status = json.dumps(dict(request.POST))
         logger.info('======================call_status==================')
         logger.info(call_status)
         logger.info(type(call_status))
-        logger.info('======================dict_call_status==================')
-        logger.info(dict(call_status))
 
-        form = CallStatusForm(dict(call_status))
+        form = CallStatusForm(call_status)
         if form.is_valid:
             logger.debug('======================START SAVING==================')
             form.save()
