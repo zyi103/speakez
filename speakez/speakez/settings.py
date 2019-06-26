@@ -182,6 +182,12 @@ CACHES = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format':
+              '%(levelname)s|%(asctime)s|%(name)s>> %(message)s',
+        },
+    },
     'handlers': {
         'file': {
             'level': 'DEBUG',
