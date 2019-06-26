@@ -475,9 +475,12 @@ def get_audio_message(request, key):
 
 @csrf_exempt
 def save_call_status(request):
-    logger = logging.getLogger(__name__)
     if request.method.lower() == 'post':
-        call_status = json.dumps(request.POST)
+        print('=====================REQUEST POST============================')
+        print(request.POST)
+        print('=====================REQUEST BODY============================')
+        print(request.body)
+        call_status = json.dumps(request.POST.body)
         form = CallStatusForm(call_status)
         if form.is_valid:
             logger.debug('======================START SAVING==================')
