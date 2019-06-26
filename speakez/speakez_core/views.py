@@ -175,9 +175,9 @@ def select_message(request, recipients):
 def call_recipients(request):
     if request.method.lower() == "post":
         # Twilio call
-        # account_sid = settings.TWILIO_KEY
-        # auth_token = settings.TWILIO_TOKEN
-        # client = Client(account_sid, auth_token)
+        account_sid = settings.TWILIO_KEY
+        auth_token = settings.TWILIO_TOKEN
+        client = Client(account_sid, auth_token)
 
         # logging
         call_message_id = request.POST.getlist('message[pk]')[0]
@@ -404,8 +404,7 @@ def get_call_message(message_sent_id):
     return call_message
 
 @login_required
-def view_report_detail(request, call_log_id):
-    message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
+def view_report_detail(request, call_log_id)    message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
     message = CallMessage.objects.filter(pk=message_id).first()
 
     recipients = []
