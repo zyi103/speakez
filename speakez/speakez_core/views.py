@@ -404,7 +404,8 @@ def get_call_message(message_sent_id):
     return call_message
 
 @login_required
-def view_report_detail(request, call_log_id)    message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
+def view_report_detail(request, call_log_id): 
+    message_id = CallLog.objects.filter(pk=call_log_id).first().message_sent_id
     message = CallMessage.objects.filter(pk=message_id).first()
 
     recipients = []
