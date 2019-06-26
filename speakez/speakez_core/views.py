@@ -480,8 +480,8 @@ def save_call_status(request):
         logger.info('======================request.POST==================')
         logger.info(request.POST)
         logger.info(type(request.POST))
-        call_status = json.load(request.POST)
-        form = CallStatusForm(call_status)
+        call_status = json.dumps(request.POST)
+        form = CallStatusForm(dict(call_status))
         if form.is_valid:
             logger.debug('======================START SAVING==================')
             form.save()
