@@ -7,22 +7,15 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-
-<!-- reuseability? -->
-<div class="row text-center bg-secondary">
-    <div class="col-sm-12">
-        <div class="login-title">
-            <h2 class="text-white">Add a new Recipient</h2>
-        </div>
+<div class="dashboard">
+    <div class="row mx-auto">
+        <form method="POST"> {% csrf_token %}
+            {{ form|crispy }}
+            <input class="btn btn-primary" type="submit">
+        </form>
     </div>
 </div>
 
-<div class="row">
-    <form method="POST"> {% csrf_token %}
-        {{ form|crispy }}
-        <input class="btn btn-primary" type="submit">
-    </form>
-</div>
 <script type="application/javascript">
 
 </script>

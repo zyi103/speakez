@@ -2,21 +2,13 @@
 {% load fontawesome %}
 {% load static %}
 
-{% block title %}Audio Messages{% endblock %}
+{% block title %}Record/Edit an Audio Message{% endblock %}
 
 {% load crispy_forms_tags %}
 
 {% block content %}
-
-<!-- reuseability? -->
-<div class="row text-center bg-secondary">
-    <div class="col-sm-12">
-        <div class="login-title">
-            <h2 class="text-white">Record/edit an Audio Message</h2>
-        </div>
-    </div>
-</div>
-
+<div class="dashboard">
+    
 <div class="row body">
     <div class="col-sm-12">
     {% if is_update %}
@@ -48,6 +40,8 @@
             <input class="btn btn-primary col-sm-2" type="submit">
         </form>
     </div>
+</div>
+
 </div>
 
 <script>

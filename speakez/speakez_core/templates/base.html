@@ -17,23 +17,33 @@
 </head>
 
 <body class="bg-light" >
-    <div class="container">
-        <div class="row bg-white">
-            <div class="col-sm-4">
-            
-            </div>
-            <div class="col-sm-4 text-center">
+    <div class="container-fluid">
+        <div class="row bg-secondary border-top border-bottom border-primary justify-content-between px-3 align-items-center">
             <a href="/admin/">
-                <h1 class="text-primary header-title">SpeakEZ</h1>
+                <h1 class="text-white header-title">SpeakEZ</h1>
             </a>
-            </div>
-            <div class="col-sm-4">
-
-            </div>
-        </div>
-        <div class="row bg-primary">
-            <div class="col-sm-12 divider">
-
+            <h2 class="login-title text-white">
+                {% block title %}{% endblock %}
+            </h2>
+            <div class="logout text-white">
+                {% if user.is_authenticated %}
+                   
+                {% else %}
+                    <p>You are not logged in</p>
+                    <a href="{% url 'login' %}">login</a>
+                {% endif %}
+                {% if user.is_superuser %}
+                    <a href="/accounts/create_user/" class="btn btn-primary">
+                        Create New User
+                    </a>
+                    <a href="/accounts/users/" class="btn btn-primary">
+                        User List
+                    </a>
+                {% endif %}
+                <a href="{% url 'login' %}" class="btn btn-primary">
+                    {% fontawesome_icon 'sign-out' color='white' large=True %}
+                    Logout
+                </a>
             </div>
         </div>
         {% block content %}

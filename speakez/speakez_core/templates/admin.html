@@ -4,57 +4,28 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="row text-center bg-secondary">
-    <div class="col-sm-12">
-        <div class="login-title">
-            <h2 class="text-white">Dashboard</h2>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-sm-12 text-right">
-        {% if user.is_authenticated %}
-            Hi {{ user.username }}!
-        {% else %}
-            <p>You are not logged in</p>
-            <a href="{% url 'login' %}">login</a>
-        {% endif %}
-        {% if user.is_superuser %}
-            <a href="/accounts/create_user/" class="btn btn-primary">
-                Create New User
-            </a>
-            <a href="/accounts/users/" class="btn btn-primary">
-                User List
-            </a>
-        {% endif %}
-        <a href="{% url 'login' %}" class="btn btn-primary">
-            {% fontawesome_icon 'sign-out' color='white' large=True %}
-            Logout
-        </a>
-    </div>
-</div>
 <div class="row dashboard">
-    <div class="col-sm-4 text-center">
-        <div class="section-bubble bg-primary">
-            {% fontawesome_icon 'envelope' color='white' large=True %}
-            <h2 class="title text-white">Messages</h2>
+    <div class="col-4 text-center">
+        <div class="section-bubble text-primary">
+            {% fontawesome_icon 'envelope' color='blue' large=True %}
+            <h4 class="title">Messages</h4>
         </div>
         <a href="{% url 'add_message' %}" class="btn btn-primary active menu-item" role="button">Select/Record New Message</a>
         <a href="{% url 'message_list' %}" class="btn btn-primary active menu-item" role="button">Update/Delete Message</a>
     </div>
-    <div class="col-sm-4 text-center">
-        <div class="section-bubble bg-primary">
-            {% fontawesome_icon 'users' color='white' large=True %}
-            <h2 class="title text-white">Recipients</h2>
+    <div class="col-4 text-center">
+        <div class="section-bubble text-primary">
+            {% fontawesome_icon 'users' color='blue' large=True %}
+            <h4 class="title">Recipients</h4>
         </div>
         <a href="{% url 'select_recipients' %}" class="btn btn-primary active menu-item" role="button">Select Recipients</a>
         <a href="{% url 'edit_recipient' %}" class="btn btn-primary active menu-item" role="button">Add New Recipients</a>
         <a href="{% url 'recipient_list' %}" class="btn btn-primary active menu-item" role="button">Delete/Edit Recipients</a>
     </div>
-    <div class="col-sm-4 text-center">
-        <div class="section-bubble bg-primary">
-            {% fontawesome_icon 'clipboard' color='white' large=True %}
-            <h2 class="title text-white">Reports</h2>
+    <div class="col-4 text-center">
+        <div class="section-bubble text-primary">
+            {% fontawesome_icon 'clipboard' color='blue' large=True %}
+            <h4 class="title">Reports</h4>
         </div>
         <a href="{% url 'view_report' %}" class="btn btn-primary active menu-item" role="button">View Reports</a>
     </div>

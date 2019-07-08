@@ -6,13 +6,6 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="row text-center bg-secondary">
-  <div class="col-sm-12">
-    <div class="login-title">
-      <h2 class="text-white">Login</h2>
-    </div>
-  </div>
-</div>
 <div class="row login-form">
   <div class="col-sm-6 offset-sm-3 text-center">
     <form method="post">
@@ -20,7 +13,7 @@
       {{ form.as_p }}
       <button class="btn btn-primary" type="submit">Login</button>
     </form>
-    <div class="text-primary header-title">
+    <div class="text-primary login-text">
       <a href="#">Create New Account</a>
       &emsp;
       <a href="#">Forgot Password? Click Here.</a>
