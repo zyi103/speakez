@@ -6,16 +6,16 @@
 {% block content %}
 <div class="row dashboard">
     <div class="col-4 text-center">
-        <div class="section-bubble text-primary">
-            {% fontawesome_icon 'envelope' color='blue' large=True %}
+        <div class="section-bubble text-white bg-primary">
+            {% fontawesome_icon 'envelope' color='white' large=True %}
             <h4 class="title">Messages</h4>
         </div>
         <a href="{% url 'add_message' %}" class="btn btn-primary active menu-item" role="button">Select/Record New Message</a>
         <a href="{% url 'message_list' %}" class="btn btn-primary active menu-item" role="button">Update/Delete Message</a>
     </div>
     <div class="col-4 text-center">
-        <div class="section-bubble text-primary">
-            {% fontawesome_icon 'users' color='blue' large=True %}
+        <div class="section-bubble text-white bg-primary">
+            {% fontawesome_icon 'users' color='white' large=True %}
             <h4 class="title">Recipients</h4>
         </div>
         <a href="{% url 'select_recipients' %}" class="btn btn-primary active menu-item" role="button">Select Recipients</a>
@@ -23,8 +23,8 @@
         <a href="{% url 'recipient_list' %}" class="btn btn-primary active menu-item" role="button">Delete/Edit Recipients</a>
     </div>
     <div class="col-4 text-center">
-        <div class="section-bubble text-primary">
-            {% fontawesome_icon 'clipboard' color='blue' large=True %}
+        <div class="section-bubble text-white bg-primary">
+            {% fontawesome_icon 'clipboard' color='white' large=True %}
             <h4 class="title">Reports</h4>
         </div>
         <a href="{% url 'view_report' %}" class="btn btn-primary active menu-item" role="button">View Reports</a>
