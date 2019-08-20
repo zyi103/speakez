@@ -2,15 +2,18 @@
 image: docker:latest
 
 variables:
-  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_HOST: tcp://localhost:2376
+  DOCKER_CERT_PATH: "/certs/client"
   DOCKER_DRIVER: overlay2
+  DOCKER_TLS_VERIFY: 0
+
 
 stages:
   - build
   - deploy
 
 services:
-  - docker:dind
+  - docker:19.03.0-dind
 
 build:
   stage: build
@@ -52,8 +55,6 @@ build:
 
 deploy:
   stage: deploy
-  services:
-    - docker:dind
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASS registry.ischool.syr.edu:5000
     - echo $RANCHER_CI_CONFIG > cli2.json
