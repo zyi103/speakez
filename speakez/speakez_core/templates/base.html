@@ -22,16 +22,12 @@
             <a href="/admin/">
                 <h1 class="text-white header-title">SpeakEZ</h1>
             </a>
-            <h2 class="login-title text-white">
-                {% block title %}{% endblock %}
-            </h2>
-            <div class="logout text-white">
-                {% if user.is_authenticated %}
-                   
-                {% else %}
-                    <p>You are not logged in</p>
-                    <a href="{% url 'login' %}">login</a>
-                {% endif %}
+            {% if user.is_authenticated %}
+                <div class="logout text-white">
+                    <a href="{% url 'logout' %}" class="btn btn-primary">
+                        {% fontawesome_icon 'sign-out' color='white' large=True %}
+                        Logout
+                    </a>
                 {% if user.is_superuser %}
                     <a href="/accounts/create_user/" class="btn btn-primary">
                         Create New User
@@ -40,14 +36,16 @@
                         User List
                     </a>
                 {% endif %}
-                <a href="{% url 'login' %}" class="btn btn-primary">
-                    {% fontawesome_icon 'sign-out' color='white' large=True %}
-                    Logout
-                </a>
-            </div>
+                </div>
+            {% endif %}
         </div>
-        {% block content %}
-        {% endblock %}
+        <div class="container">
+            <h2 class="text-center text-black mt-2">
+                {% block title %}{% endblock %}
+            </h2>
+            {% block content %}
+            {% endblock %}
+        </div>
     </div>
 </body>
 

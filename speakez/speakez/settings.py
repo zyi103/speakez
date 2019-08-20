@@ -167,6 +167,8 @@ LOGIN_REDIRECT_URL = '/admin/'
 
 LOGIN_URL = '/accounts/login/'
 
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
