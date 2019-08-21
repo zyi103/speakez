@@ -6,8 +6,8 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="row login-form">
-  <div class="col-sm-6 offset-sm-3 text-center">
+
+    <br>
     <form method="post">
       {% csrf_token %}
       {{ form.as_p }}
@@ -18,6 +18,5 @@
       &emsp;
       <a href="#">Forgot Password? Click Here.</a>
     </div>
-  </div>
-</div>
+    
 {% endblock %}

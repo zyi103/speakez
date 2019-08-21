@@ -4,8 +4,8 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="row dashboard">
-    <div class="col-4 text-center">
+<div class="row justify-content-around no-gutters dashboard">
+    <div class="col-3">
         <div class="section-bubble text-white bg-primary">
             {% fontawesome_icon 'envelope' color='white' large=True %}
             <h4 class="title">Messages</h4>
@@ -13,7 +13,7 @@
         <a href="{% url 'add_message' %}" class="btn btn-primary active menu-item" role="button">Select/Record New Message</a>
         <a href="{% url 'message_list' %}" class="btn btn-primary active menu-item" role="button">Update/Delete Message</a>
     </div>
-    <div class="col-4 text-center">
+    <div class="col-3">
         <div class="section-bubble text-white bg-primary">
             {% fontawesome_icon 'users' color='white' large=True %}
             <h4 class="title">Recipients</h4>
@@ -22,7 +22,7 @@
         <a href="{% url 'edit_recipient' %}" class="btn btn-primary active menu-item" role="button">Add New Recipients</a>
         <a href="{% url 'recipient_list' %}" class="btn btn-primary active menu-item" role="button">Delete/Edit Recipients</a>
     </div>
-    <div class="col-4 text-center">
+    <div class="col-3">
         <div class="section-bubble text-white bg-primary">
             {% fontawesome_icon 'clipboard' color='white' large=True %}
             <h4 class="title">Reports</h4>

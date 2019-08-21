@@ -5,9 +5,9 @@
 {% block title %}Add Category{% endblock %}
 
 {% block content %}
-<div class="dashboard w-25">
+<div>
     
-<form id="category" class="row-no-padding" method="POST"> {% csrf_token %}
+<form id="category" class="text-left" method="POST"> {% csrf_token %}
     {{ form|crispy }}
     <button id="submit" type="submit" class="btn btn-primary">Submit</button>
 </form>

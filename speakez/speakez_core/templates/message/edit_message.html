@@ -9,38 +9,40 @@
 {% block content %}
 <div class="dashboard">
     
-<div class="row body">
-    <div class="col-sm-12">
-    {% if is_update %}
-        <audio style="width:50%" controls src="/admin/audio/{{ message.audio.name }}/" type="audio/wav" id="audio"></audio>
-    {% else %}
-        <audio style="width:50%" controls autoplay id="audio"></audio>
-    {% endif %}
-        <div class="row col-sm-6 justify-content-around">
-            <button class="col-sm-4 btn btn-primary js-start">{% fontawesome_icon 'microphone' %}</button>
-            <button class="col-sm-4 btn btn-primary js-stop" disabled>{% fontawesome_icon 'square' %}</button>
-            <button class="col-sm-2 btn btn-primary">{% fontawesome_icon 'circle' %}</button>
-        </div>
-        <!-- <input id="id_audio" hidden> -->
+    <div class="row body text-left">
+        <div>
+        {% if is_update %}
+            <audio style="width:75%" controls src="/admin/audio/{{ message.audio.name }}/" type="audio/wav" id="audio"></audio>
+        {% else %}
+            <audio style="width:75%" controls autoplay id="audio"></audio>
+        {% endif %}
+            <div class="row justify-content-around">
+                <button class="col-sm-3 btn btn-primary js-start">{% fontawesome_icon 'microphone' %}</button>
+                <button class="col-sm-3 btn btn-primary js-stop" disabled>{% fontawesome_icon 'square' %}</button>
+                <button class="col-sm-2 btn btn-primary">{% fontawesome_icon 'circle' %}</button>
+            </div>
+            <br>
+            <!-- <input id="id_audio" hidden> -->
 
-        <form class="row-no-padding" method="POST" {% if is_update %}
-                                action="{% url 'update_message_detail' message.id %}"
-                            {% else %}
-                                action="{% url 'add_message' %}"
-                            {% endif %} 
+            <form class="row-no-padding" method="POST" 
+            {% if is_update %} 
+            action="{% url 'update_message_detail' message.id %}"
+            {% else %}
+            action="{% url 'add_message' %}"
+            {% endif %} 
             enctype="multipart/form-data"> {% csrf_token %}
-            <div class="col-sm-4">
-                {{ form.category|as_crispy_field }}
-                <button type="button" class="btn btn-primary" onclick="add_category()"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                {{ form.title|as_crispy_field }}
-            </div>
-            <div class="col-sm-12">
-                {{ form.content|as_crispy_field }}
-            </div>
-            <input class="btn btn-primary col-sm-2" type="submit">
-        </form>
+                <div>
+                    {{ form.category|as_crispy_field }}
+                    Add New Category: &nbsp; <button type="button" class="btn btn-primary" onclick="add_category()"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                    {{ form.title|as_crispy_field }}
+                </div>
+                <div>
+                    {{ form.content|as_crispy_field }}
+                </div>
+                <input class="btn btn-primary col-sm-2" type="submit">
+            </form>
+        </div>
     </div>
-</div>
 
 </div>
 
