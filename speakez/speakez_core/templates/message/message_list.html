@@ -16,12 +16,18 @@
                 <th>Audio</th>
                 <th>Duration</th>
                 <th>Content</th>
+                <th>Actions</th>
             </tr>
         </thead>
     </table>
 {% else %}
     <p>No messages are available.</p>
 {% endif %}
+
+<div class="row" style="display: flex; justify-content: center;">
+        <button type="button" name="home" id="home" class="btn btn-primary" style="margin-right: 20px;" onclick="goHome()" btn-lg btn-block">Home</button>
+        <button type="button" name="send" id="send" class="btn btn-primary" onclick="goSend()" btn-lg btn-block">Go to Send Page</button>
+</div>
 
 
 </div>
@@ -55,6 +61,10 @@
                     mRender : function ( data, type, row ) { 
                     return `${row.content}`}
                 },
+                {  
+                    mRender : function ( data, type, row ) { 
+                    return `<button type="button" name="delete-${row.id}" id="delete-${row.id}" onclick="onDelete(${row.id})" class="btn btn-primary" btn-lg btn-block">Delete</button>`}
+                },
             ]
         });
         $('#messages tbody').on( 'click', 'td', function () {
@@ -63,5 +73,31 @@
             window.location.href = `${id}/`;
         });
     });
+
+    function goHome() {
+        window.location.href = '/admin/';
+    }
+
+    function goSend() {
+        window.location.href = '/admin/select_recipients/';
+    }
+
+    function onDelete(massage_id) {
+        $.ajax({
+            type: "POST",
+            url: '/admin/delete_message/',
+            data: {
+                'id': massage_id,
+            },
+            success: function(data) {
+                window.location.href = '/admin/view_messages';
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                console.log(thrownError)
+            },
+        });
+    }
+
 </script>
 {% endblock %}

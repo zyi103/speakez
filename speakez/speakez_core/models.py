@@ -70,6 +70,8 @@ class CallMessage(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_time_created = models.DateTimeField(_("Date and Time Created"), default=timezone.now)
+    date_time_edited = models.DateTimeField(_("Date and Time Edited"), auto_now=timezone.now)
+    deleted = models.BooleanField(_("Deleted"), default=0)
     duration = models.FloatField(_("Duration in seconds"))
     title = models.CharField(_("Title"), max_length=250)
     content = models.TextField(_("Content"), blank=True, null=True)

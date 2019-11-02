@@ -312,8 +312,21 @@ def create_messages_json(messages_list):
         print(message_dict)
         messages.append(message_dict)
     return json.dumps(list(messages), cls=DjangoJSONEncoder)
-    
 
+@login_required 
+def delete_message_detail(request, delete_message_id):
+    message = CallMessage.objects.get(pk=delete_message_id)
+#     form = CallMessageForm(instance=message)
+#     if request.method.ler() == "post":
+#         form = CallMessageForm(request.POST, request.FILES, instance=message)
+#         if form.is_valid():
+#             file_path = settings.MEDIA_ROOT + '/uploads/' + message.title + '.wav'
+#             print(file_path + '_OLD')
+#             os.replace(file_path,  file_path + '_OLD')
+#             # os.remove(file_path)
+#             form.save()   
+    
+    return true
 
 @login_required 
 def call_message_detail(request, call_message_id):
