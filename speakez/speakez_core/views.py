@@ -294,7 +294,7 @@ def add_category(request):
 
 @login_required 
 def list_call_messages(request):
-    messages_list = CallMessage.objects.all()
+    messages_list = CallMessage.objects.filter(deleted=0)
     messages = create_messages_json(messages_list)
     print(messages)
     return render(request, 'message/message_list.html', context={"messages": messages})
@@ -314,20 +314,15 @@ def create_messages_json(messages_list):
     return json.dumps(list(messages), cls=DjangoJSONEncoder)
 
 @login_required 
-def delete_message_detail(request, delete_message_id):
-    message = CallMessage.objects.get(pk=delete_message_id)
-#     form = CallMessageForm(instance=message)
-#     if request.method.ler() == "post":
-#         form = CallMessageForm(request.POST, request.FILES, instance=message)
-#         if form.is_valid():
-#             file_path = settings.MEDIA_ROOT + '/uploads/' + message.title + '.wav'
-#             print(file_path + '_OLD')
-#             os.replace(file_path,  file_path + '_OLD')
-#             # os.remove(file_path)
-#             form.save()   
+@csrf_exempt
+def delete_message(request):
+    if request.method.lower() == "post":
+        message = CallMessage.objects.get(pk=request.POST.getlist('id')[0])
+        message.deleted = 1
+        message.save()
+        return HttpResponse(status=200)
+    return HttpResponse(status=400)
     
-    return true
-
 @login_required 
 def call_message_detail(request, call_message_id):
     message = CallMessage.objects.get(pk=call_message_id)

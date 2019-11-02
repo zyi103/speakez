@@ -13,7 +13,7 @@ from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
 class CallMessageForm(ModelForm):
     class Meta:
         model = CallMessage
-        fields = ['duration', 'title', 'category','content', 'audio']
+        fields = ['duration', 'title', 'category','content', 'audio','deleted']
         widgets = {
             'content': Textarea(attrs={'cols': 60, 'rows': 10}),
         }

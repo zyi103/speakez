@@ -63,7 +63,7 @@
                 },
                 {  
                     mRender : function ( data, type, row ) { 
-                    return `<button type="button" name="delete-${row.id}" id="delete-${row.id}" onclick="onDelete(${row.id})" class="btn btn-primary" btn-lg btn-block">Delete</button>`}
+                    return `<button type="button" name="delete-${row.id}" id="delete-${row.id}" onclick="onDelete('${row.id}')" class="btn btn-primary" btn-lg btn-block">Delete</button>`}
                 },
             ]
         });
@@ -85,7 +85,7 @@
     function onDelete(massage_id) {
         $.ajax({
             type: "POST",
-            url: '/admin/delete_message/',
+            url: '/admin/delete_messages/',
             data: {
                 'id': massage_id,
             },
