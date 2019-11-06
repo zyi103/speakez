@@ -35,6 +35,7 @@ urlpatterns = [
     path('admin/edit_recipients/<uuid:recipient_id>/', views.recipients_detail, name='recipient_detail'),
     path('admin/view_recipients/', views.list_recipients, name='recipient_list'),
     path('admin/select_recipients/', views.select_recipients, name='select_recipients'),
+    path('admin/delete_recipients/', views.delete_recipient, name='delete_recipient'),
     path('admin/select_recipients/select_message/<recipients>/', views.select_message, name='select_message'),
     path('admin/call_recipients/', views.call_recipients, name='call_recipients'),
     path('admin/view_report/', views.view_report, name='view_report'),

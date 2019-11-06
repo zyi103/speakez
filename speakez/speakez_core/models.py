@@ -40,6 +40,10 @@ class Refugee(models.Model):
     emergency_contact = models.CharField(_("Emergency Contact"), max_length=300, blank=True, null=True)
     martial_status = models.CharField(max_length=9, choices=MARTIAL_STATUSES, default=SINGLE)
 
+    date_time_created = models.DateTimeField(_("Date and Time Created"), default=timezone.now)
+    date_time_edited = models.DateTimeField(_("Date and Time Edited"), auto_now=timezone.now)
+    deleted = models.BooleanField(_("Deleted"), default=0)
+
     def __str__(self):
         return self.last_name + ', ' + self.first_name
 

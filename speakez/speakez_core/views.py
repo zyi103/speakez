@@ -143,7 +143,7 @@ def dashboard(request):
 
 @login_required 
 def list_recipients(request):
-    recipients = Refugee.objects.all().values_list('first_name','middle_name','last_name','gender','age','phone_number','demographic_info','ethnicity',
+    recipients = Refugee.objects.filter(deleted=0).values_list('first_name','middle_name','last_name','gender','age','phone_number','demographic_info','ethnicity',
         'city','id')
     recipients_json = json.dumps(list(recipients), cls=DjangoJSONEncoder)
     return render(request, 'refugee/recipient_list.html', context={"recipient": recipients_json})
@@ -152,7 +152,7 @@ def list_recipients(request):
 @login_required 
 @csrf_exempt
 def select_recipients(request):
-    recipients_json = serializers.serialize('json', Refugee.objects.all())
+    recipients_json = serializers.serialize('json', Refugee.objects.filter(deleted=0))
     # redirect the select recipients list through view for validation
     # if request.method.lower() == "post":
     #     recipients_list = request.POST.getlist('data[]')
@@ -162,10 +162,20 @@ def select_recipients(request):
     #         return redirect('select_message', recipients=recipients_url)
     return render(request, 'refugee/select_recipients.html', context={"recipient": recipients_json})
 
+@login_required 
+@csrf_exempt
+def delete_recipient(request):
+    if request.method.lower() == "post":
+        recipients = Refugee.objects.get(pk = request.POST.getlist('id')[0])
+        recipients.deleted = 1
+        recipients.save()
+        return HttpResponse(status = 200)
+    return HttpResponse(status = 400)
+
 
 @login_required 
 def select_message(request, recipients):
-    messages_json = serializers.serialize('json', CallMessage.objects.all())
+    messages_json = serializers.serialize('json', CallMessage.objects.filter(deleted=0))
     recipients = recipients.split('&')
     return render(request, 'refugee/select_message.html', context={"recipients": recipients, "messages": messages_json})
 

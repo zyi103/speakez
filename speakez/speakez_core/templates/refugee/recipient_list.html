@@ -14,15 +14,21 @@
 <script type="application/javascript">
     let dataSet = {{recipient|safe}}
 
+    console.log(dataSet)
     $(document).ready(function () {
         let table = $('#refugees').DataTable({
             data: dataSet,
             columns: [
-                { title: "first_name" },
-                { title: "middle_name" },
-                { title: "last_name" },
-                { title: "gender" },
-                { title: "age" },
+                { title: "First Name" },
+                { title: "Middle Name" },
+                { title: "Last Name" },
+                { title: "Gender" },
+                { title: "Age" },
+                {  
+                    title:"Actions",
+                    mRender : function ( data, type, row ) { 
+                    return `<button type="button" name="delete-${row[9]}" id="delete-${row[9]}" onclick="onDelete('${row[9]}')" class="btn btn-primary" btn-lg btn-block">Delete</button>`}
+                },
             ],
         });
         $('#refugees tbody').on( 'click', 'td', function () {
@@ -31,5 +37,22 @@
             window.location.href = `/admin/edit_recipients/${id}/`;
         });
     });
+
+    function onDelete(recipient_id) {
+        $.ajax({
+            type: "POST",
+            url: '/admin/delete_recipients/',
+            data: {
+                'id': recipient_id,
+            },
+            success: function(data) {
+                window.location.href = '/admin/view_recipients';
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                console.log(thrownError)
+            },
+        });
+    }
 </script>
 {% endblock %}
