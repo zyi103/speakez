@@ -21,9 +21,9 @@ class Refugee(models.Model):
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    first_name = models.CharField(_("First Name"), max_length=250, blank=True, null=True)
+    first_name = models.CharField(_("First Name"), max_length=250, blank=False, null=False)
     middle_name = models.CharField(_("Middle Name"), max_length=250, blank=True, null=True)
-    last_name = models.CharField(_("Last Name"), max_length=250, blank=True, null=True)
+    last_name = models.CharField(_("Last Name"), max_length=250, blank=False, null=False)
     gender = models.CharField(_("Gender"), max_length=100, blank=True, null=True)
     age = models.PositiveIntegerField(_("Age"), default=0)
 
