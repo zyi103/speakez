@@ -20,4 +20,4 @@ EXPOSE 9000
 EXPOSE 9001
 EXPOSE 3000
 
-CMD [ "entrypoint.sh" ]
+ENTRYPOINT [ "entrypoint.sh" ]
